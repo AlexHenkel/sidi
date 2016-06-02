@@ -19,7 +19,8 @@ var Days = {
 var arrDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
 // Constructor of subject
-function Subject(iName, sCode, arrDays, iStart, iDuration, arrTeachers, sBuilding, sClassroom, arrOptions, sCourseDate, iPriority, sType, arrChildrenCourses, bHasParentCourse, sParentCourse, iUnits, iCapacity, iStudentsRegistered) {
+function Subject(iID, iName, sCode, arrDays, iStart, iDuration, arrTeachers, sBuilding, sClassroom, arrOptions, sCourseDate, iPriority, sType, arrChildrenCourses, bHasParentCourse, sParentCourse, iUnits, iCapacity, iStudentsRegistered) {
+	this.id = iID;
 	this.name = iName;
 	this.code = sCode;
 	this.days = arrDays;
@@ -355,18 +356,23 @@ function getGroupCard(eSubject, $groupCardOriginal) {
 		}
 	});
 
+	// Verify if the current subject overlaps with another that is already in the schedule
 	if (isOverlapping(eSubject)) {
 		$groupCard.addClass('overlap');
 	}
 
+	// Verify if the group is already full
 	if (eSubject.isFull()) {
 		$groupCard.addClass('closed');
 	}
 	else {
 		$groupCard.addClass('open');
-		$groupCard.attr('href', '#subjectsTab');
+		$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
 		$groupCard.attr('aria-controls', 'subjectsTab');
 	}
+
+	// Add the id as value to get the object later
+	$groupCard.attr("value", eSubject.id);
 
 	return $groupCard;
 }

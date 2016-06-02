@@ -1,0 +1,209 @@
+.dashboard-header {
+	background: #f7f7f7;
+	padding-bottom: 40px !important;
+}
+
+.header-inner {
+	padding: 4px 0;
+	.logo {
+		img {
+			height: 45px;
+		}
+	}
+
+	.pull-right {
+		padding: 15px 0;
+	}
+
+	.top-menu {
+		li {
+			.name {
+				color: #fff; 
+				font-size: 16px; 
+				height: auto; 
+				padding: 5px 8px;
+			}
+		}
+	}
+}
+
+.card .card-header h2 {
+    font-size: 27px;
+    font-weight: 400;
+}
+
+.f-16 {
+	font-size: 16px;
+}
+
+.m-0 {
+	margin: 0;
+}
+
+#chat {
+	width: 150px;
+	p {
+		font-size: 16px; 
+		text-align: center;
+		padding: 5px 8px;
+	}
+	ul {
+		padding-left: 0;
+		li {
+			list-style: none;
+			a {
+				display: block;
+		        padding: 8px 17px;
+			    clear: both;
+			    font-weight: normal;
+			    line-height: 1.42857143;
+			    color: #333333;
+			    white-space: nowrap;
+			    cursor: pointer;
+			}
+		}
+	}
+}
+
+.progress {
+	background-color: #cecece;
+}
+
+.cancel {
+	font-size: 2em;
+}
+
+.d-inline {
+	display: inline;
+}
+
+.back-arrow {
+	i {
+		padding-top: 5px;
+	}
+}
+
+.icon-step {
+	font-size: 39px;
+}
+
+.element {
+	font-weight: 700;
+}
+
+.description {
+	color: #AEAEAE;
+	font-style: italic;
+}
+
+@media (min-width: @screen-sm-min) {
+	.header-title {
+		vertical-align: middle;
+		display: inline-block;
+		font-size: 28px;
+		margin-left: 5px;
+	}
+}
+
+.material-list {
+	padding-left: 0;
+	list-style-type: none;
+	.element {
+		font-size: 17px;
+		margin-bottom: 0;
+	}
+
+	.description {		
+		margin-bottom: 8px;
+	}
+}
+
+@font-size: 13px;
+@line-height: 1.42857143;
+@lines-to-show: 3;
+
+.schedule-big {
+	thead {
+		th {
+			text-align: center;
+			font-weight: 700 !important;
+			
+		}
+	}
+	tr {
+		td {
+			max-width: 114px;
+			height: 0;
+			margin: 0 auto;
+			-webkit-line-clamp: @lines-to-show;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-align: center;
+
+			&:not(.hour-cell) {
+				color: #fff;
+				vertical-align: middle;
+			}
+
+			&:not(:last-child) {
+				border-right: 2px solid #fff !important;
+			}
+
+			&.hour-cell {
+				padding-top: 0;
+			}
+
+			span {
+				font-weight: 700;
+			}
+		}
+	}
+}
+
+.small-card {
+	text-align: left;
+	text-transform: none;
+	width: 100%;
+	margin-bottom: 15px;
+	&.selected:after {
+		font: normal normal normal 14px/1 'Material Design Iconic Font';
+		content: "\f299";
+		font-size: 16px;
+		color: @completed;
+		position: absolute;
+		top: 8px;
+		right: 2px;
+	}
+	.subject-title {
+		font-size: 14px;
+		font-weight: 700;
+		white-space: normal;
+		padding-bottom: 10px;
+		padding-right: 5px;
+		border-bottom: 1px solid #eaeaea;
+	}
+	.material-list {
+		margin-top: 5px;
+		.element {
+			font-size: 13px;
+		}
+	}
+
+}
+
+.subjects-body,
+.courses-body,
+.groups-body {
+	h3 {
+		margin-top: 0;
+	}
+
+	.nav-title {
+		font-size: 15px;
+	    color: #777;
+	    margin: 0 0 10px 0;
+	    font-weight: 400;
+	    text-transform: uppercase;
+	}
+}

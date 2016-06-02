@@ -350,8 +350,8 @@
             new Subject(7, "Expresión verbal en el Ámbito profesional ", "TC1005.16", ["monday", "thursday"], 1330, 3, ["Delia Hinojosa"], "A3", "112", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 503, "academic", [], false, "", 8, 30, 20));
 
         $(document).ready(function($) {
-            printScheduleHome(arrSubjects); // Prints schedule out of dummy data
-            printSummary(arrSubjects, $summaryCardOriginal); // Prints summary with the template and dummy data
+            printScheduleHome(); // Prints schedule out of dummy data
+            printSummary(); // Prints summary with the template and dummy data
 
             if($("#scheduleHome").find('.monday.h-930').length > 0) {
                 console.log(1);

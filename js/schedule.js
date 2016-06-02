@@ -154,7 +154,9 @@ PRINTS SCHEDULE AT SELECTION OF SCHEDULE
  */
 
 function printScheduleAtSelection() {
-	$
+	var $schedule = $scheduleAtSelectionOriginal.clone(true);
+	$("#scheduleAtSelection").remove();
+
 	// Sort function first orders ascending by hour, and then by the last day the class is given
 	// This ensures, the subjectPointer works correctly
 	arrSubjects.sort(function(a, b) {
@@ -219,10 +221,13 @@ function printScheduleAtSelection() {
 		});
 
 		sCellText += "</tr>"; // Close the <tr>
-		$("#scheduleAtSelection tbody").append(sCellText); // Apend the <tr> to the body
+		// $("#scheduleAtSelection tbody").append(sCellText); // Apend the <tr> to the body
+		$schedule.find("tbody").append(sCellText); // Apend the <tr> to the body
+
 	});
 
-	return $("#scheduleAtSelection");
+	$("#schedule-col .table-responsive").append($schedule);
+	return $schedule;
 }
 
 
@@ -233,6 +238,8 @@ PRINTS SUMMARY
  */
 
 function printSummary() {
+	$(".summary").empty(); // Clears the DOM object
+
 	$.each(arrSubjects, function(iSubject, eSubject) {
 		var $summaryCard = $summaryCardOriginal.clone(true); // Clones the original to not modifying it
 
@@ -296,13 +303,22 @@ VERIFY IF THE CLASS OVERLAPS WITH SOME OTHER CLASS
 
  */
 function isOverlapping(eSubject) {
+	var bOverlaps = false;
 	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){
-		$.each(eSubject.days, function(iDay, eDay) {
-			if (!$("#scheduleAtSelection ." + eDay + ".h-" + eHour + ":empty").length) {
-				return false;
-			}
-		});
+		if (!bOverlaps) {
+			$.each(eSubject.days, function(iDay, eDay) {
+				if (!$("#scheduleAtSelection ." + eDay + ".h-" + eHour + ":empty").length) {
+					bOverlaps = true;
+					return false;
+				}
+			});
+		}
+		else {
+			return false;
+		}
 	});
+
+	return bOverlaps;
 }
 
 /*
@@ -382,6 +398,30 @@ function getGroupCard(eSubject) {
 
 /*
 
+REMOVES THE CLASS SELECTED AND REMOVES THE OBJECT FROM THE ARRAY OF SUBJECTS OF THE USER IF THE SCHEDULE WAS ALREADY SELECTED
+
+*/
+
+function removeSelected(sSubject) {
+    $.each(arrSubjects, function(iSubject, eSubject) { // For each subject of the user
+    	if (eSubject.name === sSubject || eSubject.parentCourse === sSubject) { // Identify the selected one
+    		$(".subject-card").each(function() {
+		    	// Remove selected class to the card at home of the subject or parent Subject
+		    	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
+		    		$(this).removeClass('selected');
+		    		return false;
+		    	}
+		    });
+    		arrSubjects.splice(iSubject, 1); // Remove the subject from the array
+    		return false;
+    	}
+    });
+    $scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
+	printSummary(); // Print the new summary
+}
+
+/*
+
 DIVIDES ALL SUBJECTS BY TYPE AND PRINT THEM SUBJECTS CARDS FOR SELECTION
 
 */
@@ -430,7 +470,7 @@ function printSubjectCards() {
 		if ((iPastPointer + 1) < iTypesPointer) { // Verify if the array has more than one element to compare
 			$.each(arrGlobalSubjects.slice((iPastPointer + 1), iTypesPointer), function(iSubject, eSubject){ // Iterate over
 				if (eSubject.name !== pastSubject.name) { // Print only one course
-					if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here					
+					if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here
 						$("." + eType + "-body").append(getSubjectCard(pastSubject, $subjectCardOriginal, iCountGroups)); // Append the card to the body type
 						iCountGroups++;
 					}
@@ -440,7 +480,7 @@ function printSubjectCards() {
 				}
 			});
 			// Append the last subject that didn't print in the loop
-			if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here					
+			if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here
 				$("." + eType + "-body").append(getSubjectCard(pastSubject, $subjectCardOriginal, iCountGroups)); // Append the card to the body type
 			}
 		}
@@ -464,21 +504,22 @@ function printCourseCards(sSubject) {
 	$(".courses-body").append("<h3>" + sSubject + "</h3>"); // Display the name of the subject as a title
 	$(".courses-body").append("<h4 class='nav-title'>Cursos</h4>"); // Display the name of the current tab
 
-	// This should retourn an array of 1 element, beacuse the subject must be only one time
+	// Find the subject, this should return an array of 1 element, beacuse the subject must be only one time. The get it's children courses
 	var arrChildrenCourses = $.grep(arrGlobalSubjects, function(eSubject){
 		return eSubject.name === sSubject;
 	})[0].childrenCourses;
 
-	$.each(arrChildrenCourses, function(index, val) {
-		var arrChildCourse = $.grep(arrGlobalSubjects, function(eSubject) {
+	$.each(arrChildrenCourses, function(index, val) { // For each children course
+		var arrChildCourse = $.grep(arrGlobalSubjects, function(eSubject) { // Find all the groups 
 			return eSubject.name === val;
 		});
 
-		$(".courses-body").append(getSubjectCard(arrChildCourse[0], $courseCardOriginal, arrChildCourse.length));
+		$.each(arrChildCourse, function(iCourse, eCourse) { // Set each children course it's parent course
+			eCourse.parentCourse = sSubject;
+		});
 
-
+		$(".courses-body").append(getSubjectCard(arrChildCourse[0], $courseCardOriginal, arrChildCourse.length)); // Print it
 	});
-
 }
 
 /*
@@ -501,12 +542,11 @@ function printGroupCards(sSubject) {
 	$.each(arrGroupsOfSubject, function(index, val) {
 		$(".groups-body").append(getGroupCard(val));
 	});
-
 }
 
 // Define here variables, for next functions to not crash
-var arrGlobalSubjects = [];
-var arrSubjects = [];
+var arrGlobalSubjects = []; // Array for all the subjects registered
+var arrSubjects = []; // Array of subjects of the current user
 
 var $summaryCardOriginal; // Summary card template
 var $subjectCardOriginal; // Subjects card template
@@ -533,22 +573,30 @@ $(document).ready(function() {
 	$(".group-card").remove();
 
 	// Gets the template of the original schedule at selection and deletes it
-	// $scheduleAtSelectionOriginal = $("#scheduleAtSelection").clone(true);
-	// $("#scheduleAtSelection").remove();
+	$scheduleAtSelectionOriginal = $("#scheduleAtSelection").clone(true);
+	$("#scheduleAtSelection").remove();
+
 	/*
 		Function when a subject is sent to courses
 	 */
 	$("body").on('click', '.to-courses', function(event) {
-		var sSubject = $(this).find(".subject-title").text();
-		printCourseCards(sSubject);
+		var sSubject = $(this).find(".subject-title").text(); // Get the name of the subject
+		if ($(this).hasClass('selected')) {
+			removeSelected(sSubject); // Remove the selected class to it's card and removes the course from the array
+		}
+		printCourseCards(sSubject); // Print it's courses
+
 	});
 
 	/*
 		Function when a subject is sent to groups
 	 */
 	$("body").on('click', '.to-groups', [$groupCardOriginal], function(event) {
-		var sSubject = $(this).find(".subject-title").text();
-		printGroupCards(sSubject);
+		var sSubject = $(this).find(".subject-title").text(); // Get the name of the subject
+		if ($(this).hasClass('selected')) {
+			removeSelected(sSubject); // Remove the selected class to it's card and removes the course from the array
+		}
+		printGroupCards(sSubject); // Print it's groups
 	});
 
 	/*
@@ -556,8 +604,6 @@ $(document).ready(function() {
 	 */
 	$("body").on({
 	    mouseenter: function (event) {
-	    	$scheduleAtSelectionCurrent = $("#scheduleAtSelection").clone(true); // Get the schedule before the change
-
 	    	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
 	    	// Should return an array of 1 element with the specific group
 	    	var eSubject = $.grep(arrGlobalSubjects, function(element) {
@@ -565,73 +611,50 @@ $(document).ready(function() {
 	    	})[0];
 
             // // Erases the selected subject if already exists
-            // $("td").each(function() {
-            //   if ($(this).html() == subjTitle) {
-            //     $(this).removeClass('info');
-            //     $(this).empty();
-            //   }
-            // });
-
-
-            // var arrSelectors;   // Creates an array of the selected cells
-            // var busy = false;   // Boolean that knows if the schedule is busy
-
-            // arrSelectors = getCells($(this));  // Get the cells of the schedule of the selected group
 
             // // Checks if the schedule is busy
-            // $.each(arrSelectors, function(index, val) {
-            //   if ($(val).html().length != 0) {
-            //     busy = true;
-            //   }
-            // });
 
-            if ($(this).hasClass("open")) {
-            	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){
-					$.each(eSubject.days, function(iDay, eDay) {
-						$("." + eDay + ".h-" + eHour).addClass('success');
+            if ($(this).hasClass("open") && !$(this).hasClass('overlap')) { // If the group is open and doesn't overlaps
+            	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+					$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+						$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
+					});
+				});
+            }
+            else if ($(this).hasClass("open") && !$(this).hasClass('overlap')) { // If the group is close but doesn't overlaps
+            	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+					$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+						$("." + eDay + ".h-" + eHour).addClass('danger');   // Transform the cell red
 					});
 				});
             }
 
             // // Paints the schedule depending on the availability
-            // if (busy) {
-            //   $.each(arrSelectors, function(index, val) {
-            //     $(val).addClass('danger');
-            //   });
-            // } else {
-            //   $.each(arrSelectors, function(index, val) {
-            //     $(val).addClass('success');
-            //   });
-            // }
 		},
 
 	    mouseleave: function () {
-            // $(".schedule-table").html($scheduleTable.html());
-            $("#scheduleAtSelection").html($scheduleAtSelectionCurrent.html());
+            printScheduleAtSelection(); // Prints the schedule before the hover
 	    },
 
         click: function (event) {
-            // event.preventDefault();
-            var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
-            var eSubject = $.grep(arrGlobalSubjects, function(element) {
-	    		return element.id == iValue;
-	    	})[0];
+            if ($(this).hasClass("open") && !$(this).hasClass('overlap')) { // Verify if the group is opened and it doesn't overlaps
+            	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
+	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
+		    		return element.id == iValue;
+		    	})[0];
 
-	    	arrSubjects.push(eSubject);
-	    	$scheduleAtSelectionCurrent = printScheduleAtSelection();
+	            $(".subject-card").each(function() {
+	            	// Add selected class to the card at home
+	            	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
+	            		$(this).addClass('selected');
+	            		return false;
+	            	}
+	            });
 
-            // // Get the subject name
-            // var subjTitle = $(".subject-title").html();
-            // var arrSelectors = getCells($(this));   // Get the cells of the schedule of the selected group
-
-            // if ($(arrSelectors[1]).hasClass('success')) {
-            //   $.each(arrSelectors, function(index, val) {
-            //      $(val).removeClass('success');
-            //      $(val).addClass('info');
-            //      $(val).html(subjTitle);
-            //   });
-            //   $(".sidebar-subjects").html(subjectMain);
-            // }
+		    	arrSubjects.push(eSubject); // Add the group to the current user array
+		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
+		    	printSummary(); // Print the new summary
+            }
         }
 	}, '.group-card');
 });

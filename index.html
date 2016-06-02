@@ -349,16 +349,9 @@
             new Subject(6, "Ciudadanía y Democracia", "TC1005.16", ["saturday"], 1200, 3, ["Juan Carlos Cobian"], "CI", "507", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 503, "academic", [], true, "Ciudadanía", 8, 30, 20),
             new Subject(7, "Expresión verbal en el Ámbito profesional ", "TC1005.16", ["monday", "thursday"], 1330, 3, ["Delia Hinojosa"], "A3", "112", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 503, "academic", [], false, "", 8, 30, 20));
 
-        $(document).ready(function($) {
+        $(document).ready(function() {
             printScheduleHome(); // Prints schedule out of dummy data
             printSummary(); // Prints summary with the template and dummy data
-
-            if($("#scheduleHome").find('.monday.h-930').length > 0) {
-                console.log(1);
-            }
-            else {
-                console.log(2);
-            }
         });
         </script>
 

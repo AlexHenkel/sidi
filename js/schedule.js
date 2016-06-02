@@ -366,7 +366,6 @@ function getGroupCard(eSubject, $groupCardOriginal) {
 		$groupCard.addClass('open');
 		$groupCard.attr('href', '#subjectsTab');
 		$groupCard.attr('aria-controls', 'subjectsTab');
-		$groupCard.addClass('to-courses');
 	}
 
 	return $groupCard;

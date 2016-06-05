@@ -29,6 +29,10 @@
   background: #ff9800;
 }
 
+body #content {
+  padding: 0;
+}
+
 .dashboard-header {
   background: #f7f7f7;
   padding-bottom: 40px !important;
@@ -147,6 +151,53 @@
   margin-bottom: 8px;
 }
 
+.card-body.card-padding-custom {
+  padding: 0 10px;
+}
+
+.block-header.custom h1 {
+  display: inline-block;
+}
+
+@media (min-width: 768px) {
+  .block-header.custom {
+    margin-bottom: 17px;
+  }
+}
+
+#info-col {
+  max-height: 100%;
+}
+
+#info-col .tab-content {
+  padding-top: 11px;
+}
+
+#schedule-col {
+  max-height: 100%;
+}
+
+#schedule-col .summary-card .card .card-header {
+  padding: 15px;
+}
+
+#schedule-col .summary-card .card .card-header h2 {
+  font-size: 18px;
+}
+
+#schedule-col .summary-card .card .card-padding {
+  padding: 15px;
+}
+
+#schedule-col .summary-card .card .material-list .element {
+  font-size: 14px;
+}
+
+.schedule-big th:not(:first-child),
+.schedule-big td:not(:first-child) {
+  width: 15.833333%;
+}
+
 .schedule-big thead th {
   text-align: center;
   font-weight: 700 !important;
@@ -161,6 +212,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+  position: relative;
+}
+
+.schedule-big tr td.hover-overlap:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: red;
+  position: absolute;
+  top: 0;
+  right: -1px;
+  opacity: 0.4;
 }
 
 .schedule-big tr td:not(.hour-cell) {
@@ -184,7 +247,8 @@
   text-align: left;
   text-transform: none;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  padding: 5px;
 }
 
 .small-card.selected:after {
@@ -197,21 +261,85 @@
   right: 2px;
 }
 
+.small-card.open:not(.overlap):after {
+  content: "";
+  background-image: url('../img/open.png');
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  top: 9px;
+  right: 4px;
+  background-size: 10px;
+  background-repeat: no-repeat;
+}
+
+.small-card.open.overlap:after {
+  content: "";
+  background-image: url('../img/open-overlap.png');
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  top: 9px;
+  right: 4px;
+  background-size: 10px;
+  background-repeat: no-repeat;
+}
+
+.small-card.closed:not(.overlap):after {
+  content: "";
+  background-image: url('../img/closed.png');
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  top: 9px;
+  right: 4px;
+  background-size: 10px;
+  background-repeat: no-repeat;
+}
+
+.small-card.closed.overlap:after {
+  content: "";
+  background-image: url('../img/closed-overlap.png');
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  top: 9px;
+  right: 4px;
+  background-size: 10px;
+  background-repeat: no-repeat;
+}
+
 .small-card .subject-title {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   white-space: normal;
-  padding-bottom: 10px;
-  padding-right: 5px;
+  padding-bottom: 3px;
+  padding-right: 9px;
   border-bottom: 1px solid #eaeaea;
 }
 
 .small-card .material-list {
-  margin-top: 5px;
+  margin-top: 3px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
-.small-card .material-list .element {
-  font-size: 13px;
+.small-card .material-list li p {
+  font-size: 10px;
+}
+
+.small-card .material-list li p.description {
+  margin-bottom: 0;
+}
+
+.small-card .row {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.small-card .row [class^="col-"] {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .subjects-body h3,

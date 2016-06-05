@@ -1,3 +1,14 @@
+/*
+
+Overwitten custom styles for Material Template
+
+ */
+
+
+body #content {
+	padding: 0;
+}
+
 .dashboard-header {
 	background: #f7f7f7;
 	padding-bottom: 40px !important;
@@ -32,14 +43,6 @@
     font-weight: 400;
 }
 
-.f-16 {
-	font-size: 16px;
-}
-
-.m-0 {
-	margin: 0;
-}
-
 #chat {
 	width: 150px;
 	p {
@@ -69,22 +72,22 @@
 	background-color: #cecece;
 }
 
-.cancel {
-	font-size: 2em;
+/*
+
+Custom general styles
+
+ */
+
+.f-16 {
+	font-size: 16px;
+}
+
+.m-0 {
+	margin: 0;
 }
 
 .d-inline {
 	display: inline;
-}
-
-.back-arrow {
-	i {
-		padding-top: 5px;
-	}
-}
-
-.icon-step {
-	font-size: 39px;
 }
 
 .element {
@@ -105,7 +108,7 @@
 	}
 }
 
-.material-list {
+.material-list { // Material Design List for element and description style
 	padding-left: 0;
 	list-style-type: none;
 	.element {
@@ -118,11 +121,63 @@
 	}
 }
 
+.card-body.card-padding-custom {
+	padding: 0 10px;
+}
+
+.block-header.custom {
+	h1 {
+		display: inline-block;
+	}
+}
+
+@media (min-width: @screen-sm-min) {
+	.block-header.custom {
+		margin-bottom: 17px;
+	}
+}
+
+
+// Select Schedule styles
+
+#info-col {
+	max-height: 100%;
+	.tab-content {
+		padding-top: 11px;
+	}
+}
+
+#schedule-col {
+	max-height: 100%;
+	.summary-card {
+		.card {
+			.card-header {
+				padding: 15px;
+				h2 {
+					font-size: 18px;
+				}
+			}
+			.card-padding {
+				padding: 15px;
+			}
+			.material-list .element {
+			    font-size: 14px;
+			}
+		}
+	}
+}
+
+
 @font-size: 13px;
 @line-height: 1.42857143;
 @lines-to-show: 3;
 
 .schedule-big {
+	th:not(:first-child),
+	td:not(:first-child) {
+		width: 15.833333%;
+	}
+
 	thead {
 		th {
 			text-align: center;
@@ -140,6 +195,18 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			text-align: center;
+			position: relative;
+			
+			&.hover-overlap:after {
+				content: "";
+				width: 100%;
+				height: 100%;
+				background: red;
+				position: absolute;
+				top: 0;
+				right: -1px;
+				opacity: 0.4;
+			}
 
 			&:not(.hour-cell) {
 				color: #fff;
@@ -165,7 +232,8 @@
 	text-align: left;
 	text-transform: none;
 	width: 100%;
-	margin-bottom: 15px;
+	margin-bottom: 10px;
+	padding: 5px;
 	&.selected:after {
 		font: normal normal normal 14px/1 'Material Design Iconic Font';
 		content: "\f299";
@@ -175,21 +243,77 @@
 		top: 8px;
 		right: 2px;
 	}
+	&.open:not(.overlap):after {
+		content: "";
+		background-image: url('../img/open.png');
+		position: absolute;
+		height: 10px;
+		width: 10px;
+		top: 9px;
+		right: 4px;
+		background-size: 10px;
+		background-repeat: no-repeat;
+	}
+	&.open.overlap:after {
+		content: "";
+		background-image: url('../img/open-overlap.png');
+		position: absolute;
+		height: 10px;
+		width: 10px;
+		top: 9px;
+		right: 4px;
+		background-size: 10px;
+		background-repeat: no-repeat;
+	}
+	&.closed:not(.overlap):after {
+		content: "";
+		background-image: url('../img/closed.png');
+		position: absolute;
+		height: 10px;
+		width: 10px;
+		top: 9px;
+		right: 4px;
+		background-size: 10px;
+		background-repeat: no-repeat;
+	}
+	&.closed.overlap:after {
+		content: "";
+		background-image: url('../img/closed-overlap.png');
+		position: absolute;
+		height: 10px;
+		width: 10px;
+		top: 9px;
+		right: 4px;
+		background-size: 10px;
+		background-repeat: no-repeat;
+	}
 	.subject-title {
-		font-size: 14px;
+		font-size: 12px;
 		font-weight: 700;
 		white-space: normal;
-		padding-bottom: 10px;
-		padding-right: 5px;
+		padding-bottom: 3px;
+		padding-right: 9px;
 		border-bottom: 1px solid #eaeaea;
 	}
 	.material-list {
-		margin-top: 5px;
-		.element {
-			font-size: 13px;
+		margin-top: 3px;
+		margin-bottom: 0;
+		text-align: center;
+		li p {
+			font-size: 10px;
+			&.description {
+				margin-bottom: 0;
+			}
 		}
 	}
-
+	.row {
+		margin-left: -8px;
+		margin-right: -8px;
+		[class^="col-"] {
+			padding-left: 5px;
+			padding-right: 5px;
+		}
+	}
 }
 
 .subjects-body,

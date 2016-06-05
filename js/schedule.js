@@ -37,7 +37,7 @@ function Subject(iID, iName, sCode, arrDays, iStart, iDuration, arrTeachers, sBu
 	this.hasParentCourse = bHasParentCourse;
 	this.parentCourse = sParentCourse;
 	this.units = iUnits;
-	this.capacity = iCapacity
+	this.capacity = iCapacity;
 	this.studentsRegistered = iStudentsRegistered;
 	this.getStartHour = function() {
 		return formattedHour(this.start);
@@ -64,7 +64,7 @@ function Subject(iID, iName, sCode, arrDays, iStart, iDuration, arrTeachers, sBu
 	};
 	this.isFull = function() { 
 		return this.capacity == this.studentsRegistered; // Checks if the group is full
-	}
+	};
 }
 
 /*
@@ -196,8 +196,7 @@ function printScheduleAtSelection() {
 						// Add the <td> the current color, the rowspan which is the duration of the subject, the building and the classroom
 						sCellText += "<td class='" + eDay + " h-" + eHour + " " +
 									arrColors[iCountSubjects] + "' rowspan='" + arrSubjects[iCountSubjects].duration + "'>" + 
-									arrSubjects[iCountSubjects].name + "<br>" + "<span>" + arrSubjects[iCountSubjects].building + " - " + 
-									arrSubjects[iCountSubjects].classroom + "</span></td>";
+									arrSubjects[iCountSubjects].name + "</td>";
 						bSubjectFound = true;
 					}
 					// If it's found, but it's not the first instance, it should not print anything because of the rowspan of the first occurence
@@ -307,9 +306,49 @@ function isOverlapping(eSubject) {
 	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){
 		if (!bOverlaps) {
 			$.each(eSubject.days, function(iDay, eDay) {
-				if (!$("#scheduleAtSelection ." + eDay + ".h-" + eHour + ":empty").length) {
+				if (!$("." + eDay + ".h-" + eHour + ":empty").length) {
 					bOverlaps = true;
 					return false;
+				}
+			});
+		}
+		else {
+			return false;
+		}
+	});
+
+	return bOverlaps;
+}
+
+/*
+
+VERIFY IF THE CLASS OVERLAPS WITH SOME OTHER CLASS EXCEPT THE ONE IN THE SECOND PARAMETER
+
+ */
+function isOverlappingExcept(eSubject, sSubjectException) {
+	var bOverlaps = false;
+	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){
+		if (!bOverlaps) {
+			$.each(eSubject.days, function(iDay, eDay) {
+				if (!$("." + eDay + ".h-" + eHour + ":empty").length) {
+					if ($("." + eDay + ".h-" + eHour).length) {
+						if (eSubject.name !== sSubjectException) {
+							bOverlaps = true;
+							return false;
+						}
+					}
+					else {
+						var iPointerHour = arrHours.indexOf(eHour) - 1;
+
+						while(!$("." + eDay + ".h-" + arrHours[iPointerHour]).length) {
+							iPointerHour--;
+						}
+
+						if($("." + eDay + ".h-" + arrHours[iPointerHour]).text() !== sSubjectException) {
+							bOverlaps = true;
+							return false;
+						}
+					}
 				}
 			});
 		}
@@ -337,14 +376,16 @@ function getSubjectCard(eSubject, $subjectCardOriginal, iGroupsNum) {
 
 	// If the subject has children courses, make the link to courses tab
 	if(eSubject.childrenCourses.length > 0) {
-		$subjectCard.find(".material-list").first().append("<li><p class='element courses-num'>" + eSubject.childrenCourses.length + "</p><p class='description'>Cursos</p></li>");
+		// The following line is to print the courses number of the subject
+		// $subjectCard.find(".material-list").first().append("<li><p class='element courses-num'>" + eSubject.childrenCourses.length + "</p><p class='description'>Cursos</p></li>");
 		$subjectCard.attr('href', '#coursesTab');
 		$subjectCard.attr('aria-controls', 'coursesTab');
 		$subjectCard.addClass('to-courses');
 	}
 	// If the subject has no children courses, make the link direct to groups tab
 	else {
-		$subjectCard.find(".material-list").first().append("<li><p class='element groups-num'>" + iGroupsNum + "</p><p class='description'>Grupos</p></li>");
+		// The following line is to print the groups number of the subject
+		// $subjectCard.find(".material-list").first().append("<li><p class='element groups-num'>" + iGroupsNum + "</p><p class='description'>Grupos</p></li>");
 		$subjectCard.attr('href', '#groupsTab');
 		$subjectCard.attr('aria-controls', 'groupsTab');
 		$subjectCard.addClass('to-groups');
@@ -375,15 +416,48 @@ function getGroupCard(eSubject) {
 		}
 	});
 
-	// Verify if the current subject overlaps with another that is already in the schedule
-	if (isOverlapping(eSubject)) {
-		$groupCard.addClass('overlap');
+	if (groupIsSelected(eSubject.id)) { // Verify if the current subject is already selected
+		$groupCard.addClass('selected');
+		$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
+		$groupCard.attr('aria-controls', 'subjectsTab');
 	}
-
-	// Verify if the group is already full
-	if (eSubject.isFull()) {
+	else if (courseIsSelected(eSubject.name)) { // Verify if the current subject is already selected to don't overlap with existing
+		if (isOverlappingExcept(eSubject, eSubject.name) && eSubject.isFull()) { // Verify if it's overlaping with other subjects and it's closed
+			$groupCard.addClass('overlap');
+			$groupCard.addClass('closed');
+		}
+		// Verify if the current subject overlaps with another that is already in the schedule but it's opened
+		else if (isOverlappingExcept(eSubject, eSubject.name) && !eSubject.isFull()) {
+			$groupCard.addClass('overlap');
+			$groupCard.addClass('open');
+		}
+		// Verify if the current subject is closed
+		else if (eSubject.isFull()) {
+			$groupCard.addClass('closed');
+		}
+		// Verify if the current subject is open and don't overlaps
+		else {
+			$groupCard.addClass('open');
+			$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
+			$groupCard.attr('aria-controls', 'subjectsTab');
+		}
+		$groupCard.addClass('current-subject'); // Add an indentifier for hovering
+	}
+	// Verify if the current subject overlaps with another that is already in the schedule and it's closed
+	else if (isOverlapping(eSubject) && eSubject.isFull()) {
+		$groupCard.addClass('overlap');
 		$groupCard.addClass('closed');
 	}
+	// Verify if the current subject overlaps with another that is already in the schedule but it's opened
+	else if (isOverlapping(eSubject) && !eSubject.isFull()) {
+		$groupCard.addClass('overlap');
+		$groupCard.addClass('open');
+	}
+	// Verify if the current subject is closed
+	else if (eSubject.isFull()) {
+		$groupCard.addClass('closed');
+	}
+	// Verify if the current subject is open and don't overlaps
 	else {
 		$groupCard.addClass('open');
 		$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
@@ -402,9 +476,9 @@ REMOVES THE CLASS SELECTED AND REMOVES THE OBJECT FROM THE ARRAY OF SUBJECTS OF 
 
 */
 
-function removeSelected(sSubject) {
+function removeSelected(eSubjectCurrent) {
     $.each(arrSubjects, function(iSubject, eSubject) { // For each subject of the user
-    	if (eSubject.name === sSubject || eSubject.parentCourse === sSubject) { // Identify the selected one
+    	if (eSubject.name === eSubjectCurrent.name || eSubject.parentCourse === eSubjectCurrent.parentCourse) { // Identify the selected one
     		$(".subject-card").each(function() {
 		    	// Remove selected class to the card at home of the subject or parent Subject
 		    	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
@@ -418,6 +492,51 @@ function removeSelected(sSubject) {
     });
     $scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
 	printSummary(); // Print the new summary
+}
+
+/*
+
+Verifies if the specific groups is already selected
+
+*/
+
+function groupIsSelected(iId) {
+	var arrSelected = $.grep(arrSubjects, function(eSubject){
+		return eSubject.id === iId;
+	});
+	return arrSelected.length;
+}
+
+/*
+
+Verifies if there is another subject of the same course selected
+
+*/
+
+function courseIsSelected(sCourseName) {
+	var arrSelected = $.grep(arrSubjects, function(eSubject){
+		return eSubject.name === sCourseName;
+	});
+
+	return arrSelected.length;
+}
+
+/*
+
+Verifies if there is another subject of the same parent course selected
+
+*/
+
+function subjectIsSelected(sParentCourse) {
+	var bFound = false;
+	$.each(arrSubjects, function(iSubject, eSubject) {
+		if (eSubject.hasParentCourse && eSubject.parentCourse === sParentCourse) {
+			bFound = true;
+			return false;
+		}
+	});
+
+	return bFound;
 }
 
 /*
@@ -509,17 +628,26 @@ function printCourseCards(sSubject) {
 		return eSubject.name === sSubject;
 	})[0].childrenCourses;
 
-	$.each(arrChildrenCourses, function(index, val) { // For each children course
+	$.each(arrChildrenCourses, function(index, eCourseName) { // For each children course
 		var arrChildCourse = $.grep(arrGlobalSubjects, function(eSubject) { // Find all the groups 
-			return eSubject.name === val;
+			return eSubject.name === eCourseName;
 		});
 
 		$.each(arrChildCourse, function(iCourse, eCourse) { // Set each children course it's parent course
 			eCourse.parentCourse = sSubject;
 		});
 
-		$(".courses-body").append(getSubjectCard(arrChildCourse[0], $courseCardOriginal, arrChildCourse.length)); // Print it
+		var $subjectCard = getSubjectCard(arrChildCourse[0], $courseCardOriginal, arrChildCourse.length); // Get the DOM object of the card
+		$subjectCard.addClass('from-courses');
+
+		if (courseIsSelected(eCourseName)) {
+			$subjectCard.addClass('selected');
+		}
+
+		$(".courses-body").append($subjectCard); // Print it
 	});
+
+	$(".courses-body").append("<a href='#subjectsTab' aria-controls='subjectsTab' class='btn btn-info btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Materias</button>");
 }
 
 /*
@@ -528,7 +656,7 @@ CLICK EVENT FOR SHOWING GROUPS OF A SUBJECT
 
 */
 
-function printGroupCards(sSubject) {
+function printGroupCards(sSubject, bCourses) {
 	$(".groups-body").empty(); // Clear the body of past prints
 	$(".groups-body").append("<h3>" + sSubject + "</h3>"); // Display the name of the subject as a title
 	$(".groups-body").append("<h4 class='nav-title'>Grupos</h4>"); // Display the name of the current tab
@@ -539,14 +667,31 @@ function printGroupCards(sSubject) {
 	});
 
 	// Print every card of the groups
-	$.each(arrGroupsOfSubject, function(index, val) {
-		$(".groups-body").append(getGroupCard(val));
+	$.each(arrGroupsOfSubject, function(index, eSubject) {
+		$(".groups-body").append(getGroupCard(eSubject));
 	});
+
+	if (bCourses) {
+		$(".groups-body").append("<a href='#coursesTab' aria-controls='coursesTab' class='btn btn-success btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Cursos</button>");
+	}
+	$(".groups-body").append("<a href='#subjectsTab' aria-controls='subjectsTab' class='btn btn-info btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Materias</button>");
+
+}
+
+/*
+
+RESIZE INFO COLUMN TO BE EQUAL AS SCHEDULE
+
+ */
+
+function resizeScheduleSelectionCols() {
+	$("#cardScheduleSelection").height($("#scheduleAtSelection").height());
 }
 
 // Define here variables, for next functions to not crash
 var arrGlobalSubjects = []; // Array for all the subjects registered
 var arrSubjects = []; // Array of subjects of the current user
+var arrSubjectsTemp = []; // Array of subjects temporary for hover elements of the same subject that is already selected
 
 var $summaryCardOriginal; // Summary card template
 var $subjectCardOriginal; // Subjects card template
@@ -581,9 +726,6 @@ $(document).ready(function() {
 	 */
 	$("body").on('click', '.to-courses', function(event) {
 		var sSubject = $(this).find(".subject-title").text(); // Get the name of the subject
-		if ($(this).hasClass('selected')) {
-			removeSelected(sSubject); // Remove the selected class to it's card and removes the course from the array
-		}
 		printCourseCards(sSubject); // Print it's courses
 
 	});
@@ -593,14 +735,16 @@ $(document).ready(function() {
 	 */
 	$("body").on('click', '.to-groups', [$groupCardOriginal], function(event) {
 		var sSubject = $(this).find(".subject-title").text(); // Get the name of the subject
-		if ($(this).hasClass('selected')) {
-			removeSelected(sSubject); // Remove the selected class to it's card and removes the course from the array
+		if ($(this).hasClass('from-courses')) { // Verify if the card comes from subjects or courses Tab
+			printGroupCards(sSubject, true); // Print it's groups
 		}
-		printGroupCards(sSubject); // Print it's groups
+		else {
+			printGroupCards(sSubject, false); // Print it's groups
+		}
 	});
 
 	/*
-		Function that handles hover and click events for cards
+		Function that handles hover and click events for group-cards to show the preview in the schedule
 	 */
 	$("body").on({
 	    mouseenter: function (event) {
@@ -610,30 +754,59 @@ $(document).ready(function() {
 	    		return element.id == iValue;
 	    	})[0];
 
-            // // Erases the selected subject if already exists
-
-            // // Checks if the schedule is busy
-
-            if ($(this).hasClass("open") && !$(this).hasClass('overlap')) { // If the group is open and doesn't overlaps
-            	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
-					$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
-						$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
+            if ($(this).hasClass("open")) { // If the group is opened
+            	if ($(this).hasClass('current-subject')) {
+            		arrSubjectsTemp = arrSubjects.slice();
+            		removeSelected(eSubject); // Remove temporary the group of the same subject
+            		printScheduleAtSelection(); // Print the new schedule and store it
+					printSummary(); // Print the new summary
+					$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+						$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+							$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
+						});
 					});
-				});
-            }
-            else if ($(this).hasClass("open") && !$(this).hasClass('overlap')) { // If the group is close but doesn't overlaps
-            	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
-					$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
-						$("." + eDay + ".h-" + eHour).addClass('danger');   // Transform the cell red
+            	}
+            	if ($(this).hasClass('overlap')) { // But overlaps
+            		$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+						$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+							if ($("." + eDay + ".h-" + eHour + ":empty").length) {
+								$("." + eDay + ".h-" + eHour).addClass('danger');   // Transform the cell red
+							}
+							else if ($("." + eDay + ".h-" + eHour).length) {
+								if (!$("." + eDay + ".h-" + eHour).hasClass('hover-overlap')) { // If it hasn't been transformed
+									$("." + eDay + ".h-" + eHour).addClass('hover-overlap');   // Transform the cell red
+								}
+							}
+							else {
+								var iHourPointer = arrHours.indexOf(eHour) - 1;
+								while(!$("." + eDay + ".h-" + arrHours[iHourPointer]).length) {
+									iHourPointer--;
+								}
+								if (!$("." + eDay + ".h-" + arrHours[iHourPointer]).hasClass('hover-overlap')) { // If it hasn't been transformed
+									$("." + eDay + ".h-" + arrHours[iHourPointer]).addClass('hover-overlap');   // Transform the cell red
+								}
+							}
+						});
 					});
-				});
+            	}
+            	else { // If the group is open and doesn't overlap
+            		$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+						$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+							$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
+						});
+					});
+            	}
             }
-
-            // // Paints the schedule depending on the availability
 		},
 
 	    mouseleave: function () {
+            if ($(this).hasClass('current-subject')) {
+            	if ($(this).hasClass('open')) {
+            		arrSubjects = arrSubjectsTemp.slice();
+            	}
+            }
             printScheduleAtSelection(); // Prints the schedule before the hover
+            printSummary(); // Prints the summary
 	    },
 
         click: function (event) {
@@ -643,6 +816,10 @@ $(document).ready(function() {
 		    		return element.id == iValue;
 		    	})[0];
 
+		    	if (groupIsSelected(eSubject.id) || courseIsSelected(eSubject.name) || subjectIsSelected(eSubject.parentCourse)) {
+		    		removeSelected(eSubject); // Remove another group of the same course or subject if needed
+		    	}
+
 	            $(".subject-card").each(function() {
 	            	// Add selected class to the card at home
 	            	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
@@ -651,9 +828,21 @@ $(document).ready(function() {
 	            	}
 	            });
 
+	            if ($(this).hasClass('current-subject')) {
+	            	$(this).removeClass('current-subject');
+	            }
+
 		    	arrSubjects.push(eSubject); // Add the group to the current user array
 		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
 		    	printSummary(); // Print the new summary
+            }
+            else if($(this).hasClass("selected")) {
+            	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
+	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
+		    		return element.id == iValue;
+		    	})[0];
+
+		    	removeSelected(eSubject); // Remove another group of the same course or subject if needed
             }
         }
 	}, '.group-card');

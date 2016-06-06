@@ -43,6 +43,12 @@ body #content {
     font-weight: 400;
 }
 
+@media (min-width: 768px) {
+	.block-header.custom {
+	    margin-bottom: 4px !important;
+	}
+}
+
 #chat {
 	width: 150px;
 	p {
@@ -139,33 +145,42 @@ Custom general styles
 
 
 // Select Schedule styles
-
-#info-col {
-	max-height: 100%;
-	.tab-content {
-		padding-top: 11px;
+#cardScheduleSelection {
+	height: 724px;
+	.card-body,
+	.row {
+		height: inherit;
 	}
-}
+	#info-col {
+		height: inherit;
+		overflow-y: auto;
+		.tab-content {
+			padding-top: 11px;
+		}
+	}
 
-#schedule-col {
-	max-height: 100%;
-	.summary-card {
-		.card {
-			.card-header {
-				padding: 15px;
-				h2 {
-					font-size: 18px;
+	#schedule-col {
+		height: inherit;
+		overflow-y: auto;
+		.summary-card {
+			.card {
+				.card-header {
+					padding: 15px;
+					h2 {
+						font-size: 18px;
+					}
 				}
-			}
-			.card-padding {
-				padding: 15px;
-			}
-			.material-list .element {
-			    font-size: 14px;
+				.card-padding {
+					padding: 15px;
+				}
+				.material-list .element {
+				    font-size: 14px;
+				}
 			}
 		}
 	}
 }
+
 
 
 @font-size: 13px;

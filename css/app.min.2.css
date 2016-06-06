@@ -29,6 +29,12 @@
   background: #ff9800;
 }
 
+/*
+
+Overwitten custom styles for Material Template
+
+ */
+
 body #content {
   padding: 0;
 }
@@ -62,12 +68,10 @@ body #content {
   font-weight: 400;
 }
 
-.f-16 {
-  font-size: 16px;
-}
-
-.m-0 {
-  margin: 0;
+@media (min-width: 768px) {
+  .block-header.custom {
+    margin-bottom: 4px !important;
+  }
 }
 
 #chat {
@@ -103,20 +107,22 @@ body #content {
   background-color: #cecece;
 }
 
-.cancel {
-  font-size: 2em;
+/*
+
+Custom general styles
+
+ */
+
+.f-16 {
+  font-size: 16px;
+}
+
+.m-0 {
+  margin: 0;
 }
 
 .d-inline {
   display: inline;
-}
-
-.back-arrow i {
-  padding-top: 5px;
-}
-
-.icon-step {
-  font-size: 39px;
 }
 
 .element {
@@ -165,31 +171,42 @@ body #content {
   }
 }
 
-#info-col {
-  max-height: 100%;
+#cardScheduleSelection {
+  height: 724px;
 }
 
-#info-col .tab-content {
+#cardScheduleSelection .card-body,
+#cardScheduleSelection .row {
+  height: inherit;
+}
+
+#cardScheduleSelection #info-col {
+  height: inherit;
+  overflow-y: auto;
+}
+
+#cardScheduleSelection #info-col .tab-content {
   padding-top: 11px;
 }
 
-#schedule-col {
-  max-height: 100%;
+#cardScheduleSelection #schedule-col {
+  height: inherit;
+  overflow-y: auto;
 }
 
-#schedule-col .summary-card .card .card-header {
+#cardScheduleSelection #schedule-col .summary-card .card .card-header {
   padding: 15px;
 }
 
-#schedule-col .summary-card .card .card-header h2 {
+#cardScheduleSelection #schedule-col .summary-card .card .card-header h2 {
   font-size: 18px;
 }
 
-#schedule-col .summary-card .card .card-padding {
+#cardScheduleSelection #schedule-col .summary-card .card .card-padding {
   padding: 15px;
 }
 
-#schedule-col .summary-card .card .material-list .element {
+#cardScheduleSelection #schedule-col .summary-card .card .material-list .element {
   font-size: 14px;
 }
 

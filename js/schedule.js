@@ -19,7 +19,7 @@ function Colors() {
 	};
 }
 var eColors = new Colors();
-var arrHours = [700, 730, 800, 830, 900, 930, 1000, 1030, 1100, 1130, 1200, 1230, 1300, 1330, 1400, 1430, 1500, 1530, 1600, 1630, 1700, 1730, 1800, 1830, 1900, 1930, 2000, 2030, 2100, 2130, 2200, 2230, 2300, 2330];
+var arrHours = [700, 730, 800, 830, 900, 930, 1000, 1030, 1100, 1130, 1200, 1230, 1300, 1330, 1400, 1430, 1500, 1530, 1600, 1630, 1700, 1730, 1800, 1830, 1900, 1930, 2000, 2030, 2100];
 var Days = {
 	monday: "Lunes",
 	tuesday: "Martes",
@@ -240,6 +240,7 @@ function printScheduleAtSelection() {
 	});
 
 	$("#schedule-col .table-responsive").append($schedule);
+	resizeScheduleSelectionCols();
 	return $schedule;
 }
 
@@ -760,7 +761,9 @@ RESIZE INFO COLUMN TO BE EQUAL AS SCHEDULE
  */
 
 function resizeScheduleSelectionCols() {
-	$("#cardScheduleSelection").height($("#scheduleAtSelection").height());
+	var iHeight = document.getElementById("schedule-col-inner").scrollHeight;
+	console.log(iHeight);
+	$("#cardScheduleSelection").height(iHeight);
 }
 
 // Define here variables, for next functions to not crash

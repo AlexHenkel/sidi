@@ -5,7 +5,20 @@ function formattedHour(hour) {
 }
 
 // Arrays of colors classes, schedule hours and days
-var arrColors = ["bgm-blue", "bgm-purple", "bgm-bluegray", "bgm-lightgreen", "bgm-teal", "bgm-deeppurple", "bgm-deeporange", "bgm-lightblue", "bgm-amber",  "bgm-cyan", "bgm-lime", "bgm-green", "bgm-indigo",  "bgm-orange", "bgm-black", "bgm-brown", "bgm-yellow", "bgm-gray", ];
+function Colors() {
+	this.colors = ["bgm-blue", "bgm-purple", "bgm-bluegray", "bgm-lightgreen", "bgm-teal", "bgm-deeppurple", "bgm-deeporange", "bgm-amber",  "bgm-cyan", "bgm-lime", "bgm-green", "bgm-indigo",  "bgm-orange", "bgm-black", "bgm-brown", "bgm-yellow", "bgm-gray"];
+	this.pointer = 0;
+	this.getColor = function() {
+		return this.colors[this.pointer];
+	}
+	this.advancePointer = function() {
+		this.pointer++;
+		if (this.pointer == this.colors.length) {
+			this.pointer = 0;
+		}
+	}
+}
+var eColors = new Colors();
 var arrHours = [700, 730, 800, 830, 900, 930, 1000, 1030, 1100, 1130, 1200, 1230, 1300, 1330, 1400, 1430, 1500, 1530, 1600, 1630, 1700, 1730, 1800, 1830, 1900, 1930, 2000, 2030, 2100, 2130, 2200, 2230, 2300, 2330];
 var Days = {
 	monday: "Lunes",
@@ -39,6 +52,7 @@ function Subject(iID, iName, sCode, arrDays, iStart, iDuration, arrTeachers, sBu
 	this.units = iUnits;
 	this.capacity = iCapacity;
 	this.studentsRegistered = iStudentsRegistered;
+	this.color = "";
 	this.getStartHour = function() {
 		return formattedHour(this.start);
 	};
@@ -117,7 +131,7 @@ function printScheduleHome() {
 					if (arrSubjects[iCountSubjects].getHalfHoursPeriod().indexOf(eHour) === 0) {
 						// Add the <td> the day, hour, current color, the rowspan which is the duration of the subject, the building and the classroom
 						sCellText += "<td class='" + eDay + " h-" + eHour + " " +
-										arrColors[iCountSubjects] + "' rowspan='" + arrSubjects[iCountSubjects].duration + "'>" + 
+										arrSubjects[iCountSubjects].color + "' rowspan='" + arrSubjects[iCountSubjects].duration + "'>" + 
 										arrSubjects[iCountSubjects].name + "<br>" + "<span>" + arrSubjects[iCountSubjects].building + " - " + 
 										arrSubjects[iCountSubjects].classroom + "</span></td>";
 						bSubjectFound = true;
@@ -195,7 +209,7 @@ function printScheduleAtSelection() {
 					if (arrSubjects[iCountSubjects].getHalfHoursPeriod().indexOf(eHour) === 0) {
 						// Add the <td> the current color, the rowspan which is the duration of the subject, the building and the classroom
 						sCellText += "<td class='" + eDay + " h-" + eHour + " " +
-									arrColors[iCountSubjects] + "' rowspan='" + arrSubjects[iCountSubjects].duration + "'>" + 
+									arrSubjects[iCountSubjects].color + "' rowspan='" + arrSubjects[iCountSubjects].duration + "'>" + 
 									arrSubjects[iCountSubjects].name + "</td>";
 						bSubjectFound = true;
 					}
@@ -204,7 +218,7 @@ function printScheduleAtSelection() {
 						bSubjectFound = true;
 					}
 
-					// If it's the last cell of a subject, adds one to subjects and colors pointers
+					// If it's the last cell of a subject, adds one to subjects pointer
 					if(arrSubjects[iCountSubjects].getHalfHoursPeriod().indexOf(eHour) === (arrSubjects[iCountSubjects].duration - 1)) {
 						if(arrSubjects[iCountSubjects].days.indexOf(eDay) === (arrSubjects[iCountSubjects].days.length - 1)) {
 							iSubjectsPointer++;
@@ -243,7 +257,7 @@ function printSummary() {
 		var $summaryCard = $summaryCardOriginal.clone(true); // Clones the original to not modifying it
 
 		// Add color, code and name to the header
-		$summaryCard.find(".card-header").addClass(arrColors[iSubject]);
+		$summaryCard.find(".card-header").addClass(eSubject.color);
 		$summaryCard.find(".card-header h2").append(eSubject.code + " " + eSubject.name);
 		
 		// Adds each teacher of the subject
@@ -586,6 +600,8 @@ function printSubjectCards() {
 		var pastSubject = arrGlobalSubjects[iPastPointer]; // Stores the first subject for comparing with the others and count groups
 		var iCountGroups = 1; // Counts how many groups of the same subject exist
 
+		arrGlobalSubjects[iPastPointer].color = eColors.getColor(); // Add the color to the first subject
+
 		if ((iPastPointer + 1) < iTypesPointer) { // Verify if the array has more than one element to compare
 			$.each(arrGlobalSubjects.slice((iPastPointer + 1), iTypesPointer), function(iSubject, eSubject){ // Iterate over
 				if (eSubject.name !== pastSubject.name) { // Print only one course
@@ -593,21 +609,25 @@ function printSubjectCards() {
 						$("." + eType + "-body").append(getSubjectCard(pastSubject, $subjectCardOriginal, iCountGroups)); // Append the card to the body type
 						iCountGroups++;
 					}
-
+					eColors.advancePointer(); // Advance the pointer of the colors as it is a new subject
 					pastSubject = eSubject; // Set the new subject as it was different from the past element
 					iCountGroups = 1;
 				}
+
+				eSubject.color = eColors.getColor(); // Add the color to the current object
 			});
 			// Append the last subject that didn't print in the loop
 			if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here
 				$("." + eType + "-body").append(getSubjectCard(pastSubject, $subjectCardOriginal, iCountGroups)); // Append the card to the body type
 			}
+			eColors.advancePointer(); // Advance the pointer of the colors as it is a new subject
 		}
 		else if ((iPastPointer + 1) === iTypesPointer) { // If it has one element, just print that subject with 1 group
 			// Append the only element of the array
 			if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here					
 				$("." + eType + "-body").append(getSubjectCard(pastSubject, $subjectCardOriginal, iCountGroups)); // Append the card to the body type
 			}
+			eColors.advancePointer();
 		}
 	});
 }

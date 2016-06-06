@@ -339,14 +339,24 @@ function isOverlapping(eSubject) {
 VERIFY IF THE CLASS OVERLAPS WITH SOME OTHER CLASS EXCEPT THE ONE IN THE SECOND PARAMETER
 
  */
-function isOverlappingExcept(eSubject, sSubjectException) {
+function isOverlappingExceptItself(eSubject) {
 	var bOverlaps = false;
-	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){
+	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // Iterate over each half hour period
 		if (!bOverlaps) {
-			$.each(eSubject.days, function(iDay, eDay) {
-				if (!$("." + eDay + ".h-" + eHour + ":empty").length) {
-					if ($("." + eDay + ".h-" + eHour).length) {
-						if (eSubject.name !== sSubjectException) {
+			$.each(eSubject.days, function(iDay, eDay) { // On each day
+				if (!$("." + eDay + ".h-" + eHour + ":empty").length) { // Verify if the cell is not empty
+					var eCurrentSubject;
+
+					if ($("." + eDay + ".h-" + eHour).length) { // Verify if the cell exist
+						eCurrentSubject = $.grep(arrSubjects, function(element) {
+				    		return element.name == $("." + eDay + ".h-" + eHour).text();
+				    	})[0]; // Gets the object of the subject in the cell
+
+						if (eSubject.name !== eCurrentSubject.name && !eSubject.hasParentCourse) { // Verify if the names are different and the subject don't have a parent course
+							bOverlaps = true;
+							return false;
+						}
+						else if(eSubject.name !== eCurrentSubject.name && eSubject.hasParentCourse && eSubject.parentCourse !== eCurrentSubject.parentCourse) { // Verify that neither the name or the parent course overlap
 							bOverlaps = true;
 							return false;
 						}
@@ -354,11 +364,19 @@ function isOverlappingExcept(eSubject, sSubjectException) {
 					else {
 						var iPointerHour = arrHours.indexOf(eHour) - 1;
 
-						while(!$("." + eDay + ".h-" + arrHours[iPointerHour]).length) {
+						while(!$("." + eDay + ".h-" + arrHours[iPointerHour]).length) { // Iterate until it's found a cell with content
 							iPointerHour--;
 						}
 
-						if($("." + eDay + ".h-" + arrHours[iPointerHour]).text() !== sSubjectException) {
+						eCurrentSubject = $.grep(arrSubjects, function(element) {
+				    		return element.name == $("." + eDay + ".h-" + arrHours[iPointerHour]).text();
+				    	})[0]; // Gets the object of the subject in the cell
+
+						if (eSubject.name !== eCurrentSubject.name && !eSubject.hasParentCourse) { // Verify if the names are different and the subject don't have a parent course
+							bOverlaps = true;
+							return false;
+						}
+						else if(eSubject.name !== eCurrentSubject.name && eSubject.hasParentCourse && eSubject.parentCourse !== eCurrentSubject.parentCourse) { // Verify that neither the name or the parent course overlap
 							bOverlaps = true;
 							return false;
 						}
@@ -435,13 +453,13 @@ function getGroupCard(eSubject) {
 		$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
 		$groupCard.attr('aria-controls', 'subjectsTab');
 	}
-	else if (courseIsSelected(eSubject.name)) { // Verify if the current subject is already selected to don't overlap with existing
-		if (isOverlappingExcept(eSubject, eSubject.name) && eSubject.isFull()) { // Verify if it's overlaping with other subjects and it's closed
+	else if (courseIsSelected(eSubject.name) || subjectIsSelected(eSubject.parentCourse)) { // Verify if the current subject is already selected to don't overlap with existing
+		if (isOverlappingExceptItself(eSubject) && eSubject.isFull()) { // Verify if it's overlaping with other subjects and it's closed
 			$groupCard.addClass('overlap');
 			$groupCard.addClass('closed');
 		}
 		// Verify if the current subject overlaps with another that is already in the schedule but it's opened
-		else if (isOverlappingExcept(eSubject, eSubject.name) && !eSubject.isFull()) {
+		else if (isOverlappingExceptItself(eSubject) && !eSubject.isFull()) {
 			$groupCard.addClass('overlap');
 			$groupCard.addClass('open');
 		}
@@ -542,15 +560,11 @@ Verifies if there is another subject of the same parent course selected
 */
 
 function subjectIsSelected(sParentCourse) {
-	var bFound = false;
-	$.each(arrSubjects, function(iSubject, eSubject) {
-		if (eSubject.hasParentCourse && eSubject.parentCourse === sParentCourse) {
-			bFound = true;
-			return false;
-		}
+	var arrSelected = $.grep(arrSubjects, function(eSubject){
+		return eSubject.hasParentCourse && eSubject.parentCourse === sParentCourse;
 	});
 
-	return bFound;
+	return arrSelected.length;
 }
 
 /*
@@ -865,7 +879,7 @@ $(document).ready(function() {
 		    	removeSelected(eSubject); // Remove another group of the same course or subject if needed
             }
         }
-	}, '.group-card');
+	}, ".group-card");
 
 	/*
 		Function to show the alert of the exit

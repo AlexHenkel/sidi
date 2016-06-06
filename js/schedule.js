@@ -10,13 +10,13 @@ function Colors() {
 	this.pointer = 0;
 	this.getColor = function() {
 		return this.colors[this.pointer];
-	}
+	};
 	this.advancePointer = function() {
 		this.pointer++;
 		if (this.pointer == this.colors.length) {
 			this.pointer = 0;
 		}
-	}
+	};
 }
 var eColors = new Colors();
 var arrHours = [700, 730, 800, 830, 900, 930, 1000, 1030, 1100, 1130, 1200, 1230, 1300, 1330, 1400, 1430, 1500, 1530, 1600, 1630, 1700, 1730, 1800, 1830, 1900, 1930, 2000, 2030, 2100, 2130, 2200, 2230, 2300, 2330];
@@ -394,6 +394,47 @@ function isOverlappingExceptItself(eSubject) {
 
 /*
 
+VERIFY IF THE CLASS OVERLAPS WITH SOME OTHER CLASS EXCEPT THE ONE IN THE SECOND PARAMETER
+
+ */
+function overlapsWith(eSubject) {
+	var bOverlaps = false;
+	var sOverlapsWith;
+	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // Iterate over each half hour period
+		if (!bOverlaps) {
+			$.each(eSubject.days, function(iDay, eDay) { // On each day
+				if (!$("." + eDay + ".h-" + eHour + ":empty").length) { // Verify if the cell is not empty
+					var eCurrentSubject;
+
+					if ($("." + eDay + ".h-" + eHour).length) { // Verify if the cell exist
+						bOverlaps = true;
+						sOverlapsWith = $("." + eDay + ".h-" + eHour).text(); // Get the name of the subject
+						return false;
+					}
+					else {
+						var iPointerHour = arrHours.indexOf(eHour) - 1;
+
+						while(!$("." + eDay + ".h-" + arrHours[iPointerHour]).length) { // Iterate until it's found a cell with content
+							iPointerHour--;
+						}
+
+						bOverlaps = true;
+						sOverlapsWith = $("." + eDay + ".h-" + arrHours[iPointerHour]).text(); // Get the name of the subject
+						return false;
+					}
+				}
+			});
+		}
+		else {
+			return false;
+		}
+	});
+
+	return sOverlapsWith;
+}
+
+/*
+
 GETS SINGLE SUBJECT CARD
 
  */
@@ -727,6 +768,10 @@ var arrGlobalSubjects = []; // Array for all the subjects registered
 var arrSubjects = []; // Array of subjects of the current user
 var arrSubjectsTemp = []; // Array of subjects temporary for hover elements of the same subject that is already selected
 
+// Globla variables to handle subject swaping
+var eNewSubject;
+var ePastSubject;
+
 var $summaryCardOriginal; // Summary card template
 var $subjectCardOriginal; // Subjects card template
 var $courseCardOriginal;  // Course card template
@@ -849,9 +894,9 @@ $(document).ready(function() {
 		    	removeSelected(eSubject); // Remove another group of the same course or subject if needed
             }
         }
-	}, ".group-card:not('overlap')");
+	}, ".group-card:not('.overlap')");
 
-/*
+	/*
 		Function that handles hover and click events for group-cards to show the preview in the schedule
 	 */
 	$("body").on({
@@ -890,7 +935,44 @@ $(document).ready(function() {
 	    },
 
         click: function (event) {
+        	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
 
+            eNewSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
+	    		return element.id === iValue;
+	    	})[0];
+
+	    	var sPastSubject = overlapsWith(eNewSubject); // Gets the subject that's overlapping
+
+	    	ePastSubject = $.grep(arrSubjects, function(element) {
+	    		return element.name === sPastSubject;
+	    	})[0];
+
+	    	swal({   
+	            title: "¿Estás seguro que quieres reemplazar esta materia?",   
+	            text: "Cambiarás del grupo " + ePastSubject.name + " con " + ePastSubject.teachers[0] + " , al grupo " + eNewSubject.name + " con " + eNewSubject.teachers[0] + ".",   
+	            type: "warning",   
+	            showCancelButton: true,   
+	            confirmButtonColor: "#25AF30",   
+	            confirmButtonText: "Si, reemplazar",
+	            cancelButtonText: "Regresar",   
+	            closeOnConfirm: true 
+	        }, function(){   
+	            removeSelected(ePastSubject);
+	            $(".subject-card").each(function() {
+	            	// Add selected class to the card at home
+	            	if ($(this).find('.subject-title').text() === eNewSubject.name || $(this).find('.subject-title').text() === eNewSubject.parentCourse) {
+	            		$(this).addClass('selected');
+	            		return false;
+	            	}
+	            });
+
+		    	arrSubjects.push(eNewSubject); // Add the group to the current user array
+		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
+		    	printSummary(); // Print the new summary
+
+		    	$("#groupsTab").removeClass('active');
+        		$("#subjectsTab").addClass('active');
+	        });
         }
             
 	}, ".group-card.overlap");

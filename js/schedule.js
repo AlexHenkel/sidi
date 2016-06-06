@@ -492,7 +492,7 @@ REMOVES THE CLASS SELECTED AND REMOVES THE OBJECT FROM THE ARRAY OF SUBJECTS OF 
 
 function removeSelected(eSubjectCurrent) {
     $.each(arrSubjects, function(iSubject, eSubject) { // For each subject of the user
-    	if (eSubject.name === eSubjectCurrent.name || eSubject.parentCourse === eSubjectCurrent.parentCourse) { // Identify the selected one
+    	if (eSubject.name === eSubjectCurrent.name || (eSubjectCurrent.hasParentCourse && eSubject.parentCourse === eSubjectCurrent.parentCourse)) { // Identify the selected one
     		$(".subject-card").each(function() {
 		    	// Remove selected class to the card at home of the subject or parent Subject
 		    	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
@@ -602,7 +602,7 @@ function printSubjectCards() {
 
 		if ((iPastPointer + 1) < iTypesPointer) { // Verify if the array has more than one element to compare
 			arrGlobalSubjects[iPastPointer].color = eColors.getColor(); // Add the color to the first subject
-			
+
 			$.each(arrGlobalSubjects.slice((iPastPointer + 1), iTypesPointer), function(iSubject, eSubject){ // Iterate over
 				if (eSubject.name !== pastSubject.name) { // Print only one course
 					if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here

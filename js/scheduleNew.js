@@ -708,35 +708,38 @@ CLICK EVENT FOR SUBJECTS WITH CHILD COURSES
 */
 
 function printCourseCards(sSubject) {
-	$(".courses-body").empty(); // Clear the body of past prints
-	$(".courses-body").append("<h3>" + sSubject + "</h3>"); // Display the name of the subject as a title
-	$(".courses-body").append("<h4 class='nav-title'>Cursos</h4>"); // Display the name of the current tab
+	$(".courses-body .panel-group").empty(); // Clear the body of past prints
+	$(".courses-body h3").text(sSubject); // Display the name of the subject as a title
 
-	// Find the subject, this should return an array of 1 element, beacuse the subject must be only one time. The get it's children courses
+	// Find the subject, this should return an array of 1 element, beacuse the subject must be only one time. Then get it's children courses
 	var arrChildrenCourses = $.grep(arrGlobalSubjects, function(eSubject){
 		return eSubject.name === sSubject;
 	})[0].childrenCourses;
+
+	var iCountSubjects = 0; // Counter to set unique id's of the accordions
 
 	$.each(arrChildrenCourses, function(index, eCourseName) { // For each children course
 		var arrChildCourse = $.grep(arrGlobalSubjects, function(eSubject) { // Find all the groups 
 			return eSubject.name === eCourseName;
 		});
 
+		var $courseAccordion = $courseAccordionOriginal.clone(true); // Get a copy of the accordion item
+
+		// Add properties for the accordion to work well
+		$courseAccordion.find('.panel-heading').attr("id", "courseHeading" + iCountSubjects);
+		$courseAccordion.find('a').attr("href", "#course" + iCountSubjects);
+		$courseAccordion.find('a').attr("aria-controls", "course" + iCountSubjects);
+		$courseAccordion.find('a').append(eCourseName); // Add course name to the title
+		$courseAccordion.find('.collapse').attr("id", "course" + iCountSubjects);
+		$courseAccordion.find('.collapse').attr("aria-labelledby", "courseHeading" + iCountSubjects);
+
 		$.each(arrChildCourse, function(iCourse, eCourse) { // Set each children course it's parent course
 			eCourse.parentCourse = sSubject;
+			$courseAccordion.find(".panel-body").append(getGroupCard(eCourse));
 		});
-
-		var $subjectCard = getSubjectCard(arrChildCourse[0], $courseCardOriginal, arrChildCourse.length); // Get the DOM object of the card
-		$subjectCard.addClass('from-courses');
-
-		if (courseIsSelected(eCourseName)) {
-			$subjectCard.addClass('selected');
-		}
-
-		$(".courses-body").append($subjectCard); // Print it
+		$(".courses-body .panel-group").append($courseAccordion); // Print it
+		iCountSubjects++;
 	});
-
-	$(".courses-body").append("<a href='#subjectsTab' aria-controls='subjectsTab' class='btn btn-info btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Materias</button>");
 }
 
 /*
@@ -789,6 +792,7 @@ var ePastSubject;
 
 var $summaryCardOriginal; // Summary card template
 var $subjectCardOriginal; // Subjects card template
+var $courseAccordionOriginal // Course accordion Template
 var $courseCardOriginal;  // Course card template
 var $groupCardOriginal; // Group card template
 var $scheduleAtSelectionOriginal; // Gets the original DOM object of the schedule
@@ -802,6 +806,10 @@ $(document).ready(function() {
 	// Gets the template of the subject card and deletes it
 	$subjectCardOriginal = $(".subject-card").clone(true);
 	$(".subject-card").remove();
+
+	// Gets the template of the course accordion and deletes it
+	$courseAccordionOriginal = $(".accordion-item").clone(true);
+	$(".accordion-item").remove();
 
 	// Gets the template of the course card and deletes it
 	$courseCardOriginal = $(".course-card").clone(true);

@@ -142,12 +142,12 @@
                                     <p class="description f-16 m-0">Turno de Inscripción</p>
                                     <h3 class="f-500 c-black m-b-20">Progreso de tu Inscripción</h3>
                                     <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 33%">
-                                            <span class="sr-only">33% Complete</span>
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                            <span class="sr-only">0% Complete</span>
                                         </div>
                                     </div>
                                     <p class="p-t-10 m-0">
-                                        Tiene <b>1</b> de <b>3</b> pasos terminados. <span class="c-red">No ha terminado su inscripción</span>
+                                        Tiene <b>0</b> de <b>3</b> pasos terminados. <span class="c-red">No ha terminado su inscripción</span>
                                         <br><br>
                                         <i>
                                             El estatus de <b>Pago</b> puede no estar actualizado al día de hoy, así como puede variar en cualquier momento, en caso de duda consulte con la Tesorería del Campus.
@@ -163,14 +163,14 @@
                     </div>
 
                     <ul class="cbp-ig-grid m-b-30">
-                        <li class="completed">
+                        <li class="incomplete">
                             <a href="scheduleNew.html">
                                 <span class="cbp-ig-icon md-today"></span>
                                 <h3 class="cbp-ig-title">Selección de Horario</h3>
                                 <span class="cbp-ig-category">Click para modificar.</span>
                             </a>
                         </li>
-                        <li class="incomplete">
+                        <li class="not-available">
                             <a href="#">
                                 <span class="cbp-ig-icon md-layers"></span>
                                 <h3 class="cbp-ig-title">Selección de Servicios</h3>
@@ -185,79 +185,6 @@
                             </a>
                         </li>
                     </ul>  <!-- Ends Dashboard Inscription Process -->
-
-                    <div class="block-header"> <!-- Schedule -->
-                        <h2>Consulta Horario</h2>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-body card-padding">
-                            <div role="tabpanel">
-                                <ul class="tab-nav" role="tablist">
-                                    <li class="active"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Horario</a></li>
-                                    <li><a href="#info" aria-controls="info" role="tab" data-toggle="tab">Resumen</a></li>
-                                </ul>
-
-                                <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane active" id="schedule">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped schedule-big" id="scheduleHome">
-                                                <thead>
-                                                    <tr>    
-                                                        <th class="bgm-lightblue">Hora</th>
-                                                        <th class="bgm-lightblue c-white">Lunes</th>
-                                                        <th class="bgm-lightblue c-white">Martes</th>
-                                                        <th class="bgm-lightblue c-white">Miércoles</th>
-                                                        <th class="bgm-lightblue c-white">Jueves</th>
-                                                        <th class="bgm-lightblue c-white">Viernes</th>
-                                                        <th class="bgm-lightblue c-white">Sábado</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                    <div role="tabpanel" class="tab-pane" id="info"> <!-- Template to show card of each subject -->
-                                        <div class="row summary">
-                                            <div class="col-sm-6 summary-card">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <h2></h2>
-                                                    </div>
-                                                    <div class="card-body card-padding">
-                                                        <ul class="material-list">
-                                                            <li>
-                                                                <p class="element teachers"></p>
-                                                                <p class="description">Profesor</p>
-                                                            </li>
-                                                            <li>
-                                                                <p class="element date"></p>
-                                                                <p class="description">Fecha</p>
-                                                            </li>
-                                                            <li>
-                                                                <p class="element class-schedule"></p>
-                                                                <p class="description">Horario</p>
-                                                            </li>
-                                                            <li>
-                                                                <p class="element building-classroom"></p>
-                                                                <p class="description">Edificio y Salón</p>
-                                                            </li>
-                                                            <li>
-                                                                <p class="element options"></p>
-                                                                <p class="description">Atributos</p>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- Ends Schedule -->
                 </div>
             </section>
         </section>
@@ -350,7 +277,6 @@
             new Subject(7, "Expresión verbal en el Ámbito profesional ", "TC1005.16", ["monday", "thursday"], 1330, 3, ["Delia Hinojosa"], "A3", "112", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 503, "academic", [], false, "", 8, 30, 20));
 
         $(document).ready(function() {
-            assignColors();
             printScheduleHome(); // Prints schedule out of dummy data
             printSummary(); // Prints summary with the template and dummy data
         });

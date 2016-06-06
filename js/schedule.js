@@ -600,9 +600,9 @@ function printSubjectCards() {
 		var pastSubject = arrGlobalSubjects[iPastPointer]; // Stores the first subject for comparing with the others and count groups
 		var iCountGroups = 1; // Counts how many groups of the same subject exist
 
-		arrGlobalSubjects[iPastPointer].color = eColors.getColor(); // Add the color to the first subject
-
 		if ((iPastPointer + 1) < iTypesPointer) { // Verify if the array has more than one element to compare
+			arrGlobalSubjects[iPastPointer].color = eColors.getColor(); // Add the color to the first subject
+			
 			$.each(arrGlobalSubjects.slice((iPastPointer + 1), iTypesPointer), function(iSubject, eSubject){ // Iterate over
 				if (eSubject.name !== pastSubject.name) { // Print only one course
 					if(!pastSubject.hasParentCourse) { // Verify if it doesn't have a parent course, to show just parent subjects here

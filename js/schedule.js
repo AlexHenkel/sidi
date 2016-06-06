@@ -866,6 +866,48 @@ $(document).ready(function() {
             }
         }
 	}, '.group-card');
+
+	/*
+		Function to show the alert of the exit
+	 */
+	$('#exit-warning').click(function(){
+        swal({   
+            title: "¿Estás seguro que quieres salir?",   
+            text: "No se guardarán los cambios",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#DD6B55",   
+            confirmButtonText: "Si, deseo salir",
+            cancelButtonText: "Regresar",   
+            closeOnConfirm: false 
+        }, function(){   
+        	location.assign("index.html");
+            // swal("Solicitud cancelada", "Tu solicitud ha sido cancelada exitosamente.", "success");
+            // setTimeout(function() {
+            	
+            // }, 2000);
+        });
+    });
+    /*
+		Function to show the alert of the exit
+	 */
+	$('#save-warning').click(function(){
+        swal({   
+            title: "¿Estás seguro que quieres guardar los cambios?",   
+            text: "Has inscrito 6 materias y 48 unidades",   
+            type: "success",   
+            showCancelButton: true,   
+            confirmButtonColor: "#25AF30",   
+            confirmButtonText: "Si, guardar",
+            cancelButtonText: "Regresar",   
+            closeOnConfirm: false 
+        }, function(){   
+            swal("Horario Guardado", "Tu horario ha sido guardado exitosamente.", "success");
+            setTimeout(function() {
+            	location.assign("index.html");
+            }, 2000);
+        });
+    });
 });
 
 

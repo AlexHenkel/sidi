@@ -794,42 +794,12 @@ $(document).ready(function() {
             		removeSelected(eSubject); // Remove temporary the group of the same subject
             		printScheduleAtSelection(); // Print the new schedule and store it
 					printSummary(); // Print the new summary
-					$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
-						$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
-							$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
-						});
-					});
             	}
-            	if ($(this).hasClass('overlap')) { // But overlaps
-            		$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
-						$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
-							if ($("." + eDay + ".h-" + eHour + ":empty").length) {
-								$("." + eDay + ".h-" + eHour).addClass('danger');   // Transform the cell red
-							}
-							else if ($("." + eDay + ".h-" + eHour).length) {
-								if (!$("." + eDay + ".h-" + eHour).hasClass('hover-overlap')) { // If it hasn't been transformed
-									$("." + eDay + ".h-" + eHour).addClass('hover-overlap');   // Transform the cell red
-								}
-							}
-							else {
-								var iHourPointer = arrHours.indexOf(eHour) - 1;
-								while(!$("." + eDay + ".h-" + arrHours[iHourPointer]).length) {
-									iHourPointer--;
-								}
-								if (!$("." + eDay + ".h-" + arrHours[iHourPointer]).hasClass('hover-overlap')) { // If it hasn't been transformed
-									$("." + eDay + ".h-" + arrHours[iHourPointer]).addClass('hover-overlap');   // Transform the cell red
-								}
-							}
-						});
+            	$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+					$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+						$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
 					});
-            	}
-            	else { // If the group is open and doesn't overlap
-            		$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
-						$.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
-							$("." + eDay + ".h-" + eHour).addClass('success');   // Transform the cell green
-						});
-					});
-            	}
+				});
             }
 		},
 
@@ -844,7 +814,7 @@ $(document).ready(function() {
 	    },
 
         click: function (event) {
-            if ($(this).hasClass("open") && !$(this).hasClass('overlap')) { // Verify if the group is opened and it doesn't overlaps
+            if ($(this).hasClass("open")) { // Verify if the group is opened and it doesn't overlaps
             	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
 	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
 		    		return element.id == iValue;
@@ -879,7 +849,51 @@ $(document).ready(function() {
 		    	removeSelected(eSubject); // Remove another group of the same course or subject if needed
             }
         }
-	}, ".group-card");
+	}, ".group-card:not('overlap')");
+
+/*
+		Function that handles hover and click events for group-cards to show the preview in the schedule
+	 */
+	$("body").on({
+	    mouseenter: function (event) {
+	    	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
+	    	// Should return an array of 1 element with the specific group
+	    	var eSubject = $.grep(arrGlobalSubjects, function(element) {
+	    		return element.id == iValue;
+	    	})[0];
+
+            $.each(eSubject.days, function(iDay, eDay) {             // And each day the class is given
+				$.each(eSubject.getHalfHoursPeriod(), function(iHour, eHour){ // For each half hour
+					if ($("." + eDay + ".h-" + eHour + ":empty").length) {
+						$("." + eDay + ".h-" + eHour).addClass('danger');   // Transform the cell red
+					}
+					else if ($("." + eDay + ".h-" + eHour).length) {
+						if (!$("." + eDay + ".h-" + eHour).hasClass('hover-overlap')) { // If it hasn't been transformed
+							$("." + eDay + ".h-" + eHour).addClass('hover-overlap');   // Transform the cell red
+						}
+					}
+					else {
+						var iHourPointer = arrHours.indexOf(eHour) - 1;
+						while(!$("." + eDay + ".h-" + arrHours[iHourPointer]).length) {
+							iHourPointer--;
+						}
+						if (!$("." + eDay + ".h-" + arrHours[iHourPointer]).hasClass('hover-overlap')) { // If it hasn't been transformed
+							$("." + eDay + ".h-" + arrHours[iHourPointer]).addClass('hover-overlap');   // Transform the cell red
+						}
+					}
+				});
+			});
+		},
+
+	    mouseleave: function () {
+            printScheduleAtSelection(); // Prints the schedule before the hover
+	    },
+
+        click: function (event) {
+
+        }
+            
+	}, ".group-card.overlap");
 
 	/*
 		Function to show the alert of the exit

@@ -400,20 +400,24 @@ Custom general styles
   padding-top: 1px;
 }
 
-.more-info-alert .summary-list {
+.sweet-alert.more-info-alert .summary-list {
   text-align: left;
 }
 
-.more-info-alert .summary-list .element {
+.sweet-alert.more-info-alert .summary-list .element {
   font-size: 14px;
   font-weight: 700;
 }
 
-.more-info-alert .summary-list .description {
+.sweet-alert.more-info-alert .summary-list .description {
   font-size: 12px;
 }
 
-.more-info-alert button {
+.sweet-alert h2 {
+  line-height: 24px;
+}
+
+.sweet-alert button {
   margin-top: 10px;
 }
 

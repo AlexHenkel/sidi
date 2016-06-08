@@ -541,6 +541,11 @@ function getGroupCard(eSubject) {
 		else if (eSubject.isFull()) {
 			$groupCard.addClass('closed');
 		}
+		// Verify if the current subject is open but has special attributes
+		else if (eSubject.options.length) {
+			$groupCard.addClass('open');
+			$groupCard.addClass('special-attributes');
+		}
 		// Verify if the current subject is open and don't overlaps
 		else {
 			$groupCard.addClass('open');
@@ -563,16 +568,16 @@ function getGroupCard(eSubject) {
 	else if (eSubject.isFull()) {
 		$groupCard.addClass('closed');
 	}
+	// Verify if the current subject is open but has special attributes
+	else if (eSubject.options.length) {
+		$groupCard.addClass('open');
+		$groupCard.addClass('special-attributes');
+	}
 	// Verify if the current subject is open and don't overlaps
 	else {
 		$groupCard.addClass('open');
 		$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
 		$groupCard.attr('aria-controls', 'subjectsTab');
-	}
-
-	// Verify if the group has special attributes
-	if (eSubject.options.length) {
-		$groupCard.addClass('special-attributes');
 	}
 
 	// Add the id as value to get the object later
@@ -945,12 +950,12 @@ $(document).ready(function() {
 	    },
 
         click: function (event) {
-            if ($(this).hasClass("open")) { // Verify if the group is opened and it doesn't overlaps
-            	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
-	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
-		    		return element.id == iValue;
-		    	})[0];
+        	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
+            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
+	    		return element.id == iValue;
+	    	})[0];
 
+            if ($(this).hasClass("open") && !$(this).hasClass("special-attributes")) { // Verify if the group is opened
 		    	if (groupIsSelected(eSubject.id) || courseIsSelected(eSubject.name) || subjectIsSelected(eSubject.parentCourse)) {
 		    		removeSelected(eSubject); // Remove another group of the same course or subject if needed
 		    	}
@@ -961,12 +966,33 @@ $(document).ready(function() {
 	            	$(this).removeClass('current-subject');
 	            }
             }
-            else if($(this).hasClass("selected")) {
-            	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
-	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
-		    		return element.id == iValue;
-		    	})[0];
+            else if ($(this).hasClass("open") && $(this).hasClass("special-attributes")) { // Verify if the group is opened and has special attributes
+            	eNewSubject = eSubject; // Copy the current subject to a global variable
+            	swal({   
+				    title: "¿Estás seguro que quieres inscibir esta materia?",   
+				    text: "La materia <b>" + eNewSubject.name + "</b> tiene los siguientes atributos: <b>" + eNewSubject.options.join(", ") + "</b>.",   
+				    type: "warning",
+				    html: true, 
+				    showCancelButton: true,   
+				    confirmButtonColor: "#25AF30",   
+				    confirmButtonText: "Si, inscibir",
+				    cancelButtonText: "Regresar",   
+				    closeOnConfirm: true 
+				}, function(){   
+				    if (groupIsSelected(eNewSubject.id) || courseIsSelected(eNewSubject.name) || subjectIsSelected(eNewSubject.parentCourse)) {
+						removeSelected(eNewSubject); // Remove another group of the same course or subject if needed
+					}
 
+				    addSubjectToCurrentArray(eNewSubject); // Adds the subject to the current array and add selected class to card
+
+					if ($(".group-card[value='" + eNewSubject.id + "']").hasClass('current-subject')) {
+				    	$(".group-card[value='" + eNewSubject.id + "']").removeClass('current-subject');
+				    }
+				    $("#groupsTab").removeClass('active');
+        			$("#subjectsTab").addClass('active');
+				});
+            }
+            else if($(this).hasClass("selected")) {
 		    	removeSelected(eSubject); // Remove another group of the same course or subject if needed
             }
         }
@@ -1040,19 +1066,33 @@ $(document).ready(function() {
 
 	    	swal({   
 	            title: "¿Estás seguro que quieres reemplazar esta materia?",   
-	            text: "Cambiarás del grupo " + ePastSubject.name + " con " + ePastSubject.teachers[0] + " , al grupo " + eNewSubject.name + " con " + eNewSubject.teachers[0] + ".",   
-	            type: "warning",   
+	            text: "Cambiarás del grupo <b>" + ePastSubject.name + "</b> con <b>" + ePastSubject.teachers[0] + "</b> , al grupo <b>" + eNewSubject.name + "</b> con <b>" + eNewSubject.teachers[0] + "</b>.",   
+	            type: "warning",
+	            html: true,
 	            showCancelButton: true,   
 	            confirmButtonColor: "#25AF30",   
 	            confirmButtonText: "Si, reemplazar",
 	            cancelButtonText: "Regresar",   
-	            closeOnConfirm: true 
-	        }, function(){   
-	            removeSelected(ePastSubject);
-	            addSubjectToCurrentArray(eNewSubject);
+	            closeOnConfirm: false 
+	        }, function(){
+	        	console.log(1);
+	        	swal({   
+				    title: "¿Estás seguro que quieres inscibir esta materia?",   
+				    text: "La materia <b>" + eNewSubject.name + "</b> tiene los siguientes atributos: <b>" + eNewSubject.options.join(", ") + "</b>.",   
+				    type: "warning",
+				    html: true, 
+				    showCancelButton: true,   
+				    confirmButtonColor: "#25AF30",   
+				    confirmButtonText: "Si, inscibir",
+				    cancelButtonText: "Regresar",   
+				    closeOnConfirm: true 
+				}, function(){   
+				    removeSelected(ePastSubject);
+		            addSubjectToCurrentArray(eNewSubject);
 
-		    	$("#groupsTab").removeClass('active');
-        		$("#subjectsTab").addClass('active');
+			    	$("#groupsTab").removeClass('active');
+	        		$("#subjectsTab").addClass('active');
+				});  
 	        });
         }
             

@@ -257,6 +257,63 @@ function printScheduleAtSelection() {
 	return $schedule;
 }
 
+/*
+
+GETS SUMMARY LIST
+
+ */
+
+function getSummaryList($summaryList, eSubject) {
+	// Adds each teacher of the subject
+	$.each(eSubject.teachers, function(iTeacher, eTeacher) {
+		$summaryList.find(".teachers").append(eTeacher);
+		// If it's not the last teacher, append a break
+		if(iTeacher !== (eSubject.teachers.length - 1)) {
+			$summaryList.find(".teachers").append("<br>");
+		}
+	});
+
+	$summaryList.find(".date").append(eSubject.courseDate);
+
+	// Adds each day the subject is given
+	$.each(eSubject.days, function(iDay, eDay) {
+		$summaryList.find(".class-schedule").append(Days[eDay]);
+		// If it's not the last day, append a comma
+		if(iDay !== (eSubject.days.length - 1)) {
+			$summaryList.find(".class-schedule").append(", ");
+		}
+	});
+
+	// Adds start and end hour
+	$summaryList.find(".class-schedule").append(" " + eSubject.getStartHour() + " - " + eSubject.getEndHour());
+
+	// Adds building and classroom
+	$summaryList.find(".building-classroom").append(eSubject.building + " " + eSubject.classroom);
+
+	// Verify if the class has options
+	if (eSubject.options.length) {
+		// Add extra attributes of class
+		$.each(eSubject.options, function(iOption, eOption) {
+			$summaryList.find(".options").append(eOption);
+			// If it's not the last option, append a break
+			if(iOption !== (eSubject.options.length - 1)) {
+				$summaryList.find(".options").append("<br>");
+			}
+		});
+	}
+	else {
+		$summaryList.find(".options").parent().remove();
+	}
+
+	// Verify if the class has parent course
+	if (eSubject.hasParentCourse) {
+		$summaryList.find(".parent-course").append(eSubject.parentCourse);
+	}
+	else {
+		$summaryList.find(".parent-course").parent().remove();
+	}
+}
+
 
 /*
 
@@ -274,45 +331,7 @@ function printSummary() {
 		$summaryCard.find(".card-header").addClass(eSubject.color);
 		$summaryCard.find(".card-header h2").append(eSubject.code + " " + eSubject.name);
 		
-		// Adds each teacher of the subject
-		$.each(eSubject.teachers, function(iTeacher, eTeacher) {
-			$summaryCard.find(".teachers").append(eTeacher);
-			// If it's not the last teacher, append a break
-			if(iTeacher !== (eSubject.teachers.length - 1)) {
-				$summaryCard.find(".teachers").append("<br>");
-			}
-		});
-
-		$summaryCard.find(".date").append(eSubject.courseDate);
-
-		// Adds each day the subject is given
-		$.each(eSubject.days, function(iDay, eDay) {
-			$summaryCard.find(".class-schedule").append(Days[eDay]);
-			// If it's not the last day, append a comma
-			if(iDay !== (eSubject.days.length - 1)) {
-				$summaryCard.find(".class-schedule").append(", ");
-			}
-		});
-
-		// Adds start and end hour
-		$summaryCard.find(".class-schedule").append(" " + eSubject.getStartHour() + " - " + eSubject.getEndHour());
-
-		// Adds building and classroom
-		$summaryCard.find(".building-classroom").append(eSubject.building + " " + eSubject.classroom);
-
-		// Add extra attributes of class
-		$.each(eSubject.options, function(iOption, eOption) {
-			$summaryCard.find(".options").append(eOption);
-			// If it's not the last option, append a break
-			if(iOption !== (eSubject.options.length - 1)) {
-				$summaryCard.find(".options").append("<br>");
-			}
-		});
-
-		// Shows the parent course if it has one
-		if(eSubject.hasParentCourse) {
-			$summaryCard.find(".material-list").append("<li><p class='element parent-course'>" + eSubject.parentCourse + "</p><p class='description'>Acredita</p></li>");
-		}
+		getSummaryList($summaryCard.find(".summary-list"), eSubject);
 
 		// Apends the card to the html
 		$(".summary").append($summaryCard);
@@ -549,6 +568,11 @@ function getGroupCard(eSubject) {
 		$groupCard.addClass('open');
 		$groupCard.attr('href', '#subjectsTab'); // If the group is opened, it gives the link to the schedule in case it's selected
 		$groupCard.attr('aria-controls', 'subjectsTab');
+	}
+
+	// Verify if the group has special attributes
+	if (eSubject.options.length) {
+		$groupCard.addClass('special-attributes');
 	}
 
 	// Add the id as value to get the object later
@@ -795,10 +819,14 @@ var $subjectCardOriginal; // Subjects card template
 var $courseAccordionOriginal // Course accordion Template
 var $courseCardOriginal;  // Course card template
 var $groupCardOriginal; // Group card template
+var $summaryListOriginal; // Summary list template
 var $scheduleAtSelectionOriginal; // Gets the original DOM object of the schedule
 var $scheduleAtSelectionCurrent; // Gets the current DOM object of the schedule
 
 $(document).ready(function() {
+	// Gets the template of the summary list and deletes it
+	$summaryListOriginal = $(".summary-list").clone(true);
+
 	// Gets the template of the summary card and deletes it
 	$summaryCardOriginal = $(".summary-card").clone(true);
 	$(".summary-card").remove();
@@ -869,6 +897,23 @@ $(document).ready(function() {
 					});
 				});
             }
+            console.log(eSubject.name);
+
+		    $(".more-info").click(function(event) {
+		    	console.log(1);
+				event.stopPropagation();
+				var $summaryList = $summaryListOriginal.clone(true);
+
+				getSummaryList($summaryList, eSubject);
+
+		    	swal({
+		    		title: eSubject.name,   
+		    		text: $summaryList.wrap('<p/>').parent().html(),   
+		    		html: true,
+		    		customClass: "more-info-alert",
+		    		allowOutsideClick: true
+		    	});
+		    });
 		},
 
 	    mouseleave: function () {
@@ -951,6 +996,21 @@ $(document).ready(function() {
 					}
 				});
 			});
+
+			$(".more-info").click(function(event) {
+				event.stopPropagation();
+				var $summaryList = $summaryListOriginal.clone(true);
+
+				getSummaryList($summaryList, eSubject);
+
+		    	swal({
+		    		title: eSubject.name,   
+		    		text: $summaryList.wrap('<p/>').parent().html(),   
+		    		html: true,
+		    		customClass: "more-info-alert",
+		    		allowOutsideClick: true
+		    	});
+		    });
 		},
 
 	    mouseleave: function () {
@@ -1003,7 +1063,7 @@ $(document).ready(function() {
 	/*
 		Function to show the alert of the exit
 	 */
-	$('#exit-warning').click(function(){
+	$('.exit-warning').click(function(){
         swal({   
             title: "¿Estás seguro que quieres salir?",   
             text: "No se guardarán los cambios",   
@@ -1020,7 +1080,7 @@ $(document).ready(function() {
     /*
 		Function to show the alert of the exit
 	 */
-	$('#save-warning').click(function(){
+	$('.save-warning').click(function(){
         swal({   
             title: "¿Estás seguro que quieres guardar los cambios?",   
             text: "Has inscrito 6 materias y 48 unidades",   

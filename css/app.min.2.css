@@ -161,14 +161,37 @@ Custom general styles
   padding: 0 10px;
 }
 
+.block-header.custom {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .block-header.custom h1 {
   display: inline-block;
+  font-size: 28px;
+  font-weight: 400;
 }
 
 @media (min-width: 768px) {
   .block-header.custom {
     margin-bottom: 17px;
   }
+}
+
+.header-inner .logo a {
+  margin-top: 9px;
+}
+
+.header-inner .logo a img {
+  height: 31px;
+}
+
+.header-inner .logo a span {
+  margin-left: 11px;
+}
+
+.breadcrumb {
+  margin-bottom: 5px;
 }
 
 #cardScheduleSelection {
@@ -183,6 +206,7 @@ Custom general styles
 #cardScheduleSelection #info-col {
   height: inherit;
   overflow-y: auto;
+  overflow-x: visible;
 }
 
 #cardScheduleSelection #info-col .tab-content {
@@ -218,6 +242,10 @@ Custom general styles
 .schedule-big thead th {
   text-align: center;
   font-weight: 700 !important;
+}
+
+.schedule-big thead th:first-child {
+  background: #edecec;
 }
 
 .schedule-big tr td {
@@ -271,10 +299,10 @@ Custom general styles
 .small-card.selected:after {
   font: normal normal normal 14px/1 'Material Design Iconic Font';
   content: "\f299";
-  font-size: 16px;
+  font-size: 20px;
   color: #25af30;
   position: absolute;
-  top: 8px;
+  top: 2px;
   right: 2px;
 }
 
@@ -282,11 +310,11 @@ Custom general styles
   content: "";
   background-image: url('../img/open.png');
   position: absolute;
-  height: 10px;
-  width: 10px;
-  top: 9px;
+  height: 16px;
+  width: 16px;
+  top: 5px;
   right: 4px;
-  background-size: 10px;
+  background-size: 14px;
   background-repeat: no-repeat;
 }
 
@@ -294,11 +322,11 @@ Custom general styles
   content: "";
   background-image: url('../img/open-overlap.png');
   position: absolute;
-  height: 10px;
-  width: 10px;
-  top: 9px;
+  height: 16px;
+  width: 16px;
+  top: 5px;
   right: 4px;
-  background-size: 10px;
+  background-size: 14px;
   background-repeat: no-repeat;
 }
 
@@ -306,11 +334,11 @@ Custom general styles
   content: "";
   background-image: url('../img/closed.png');
   position: absolute;
-  height: 10px;
-  width: 10px;
-  top: 9px;
+  height: 16px;
+  width: 16px;
+  top: 5px;
   right: 4px;
-  background-size: 10px;
+  background-size: 14px;
   background-repeat: no-repeat;
 }
 
@@ -318,20 +346,21 @@ Custom general styles
   content: "";
   background-image: url('../img/closed-overlap.png');
   position: absolute;
-  height: 10px;
-  width: 10px;
-  top: 9px;
+  height: 16px;
+  width: 16px;
+  top: 5px;
   right: 4px;
-  background-size: 10px;
+  background-size: 14px;
   background-repeat: no-repeat;
 }
 
 .small-card .subject-title {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 400;
   white-space: normal;
   padding-bottom: 3px;
-  padding-right: 9px;
+  padding-right: 18px;
+  line-height: 1.2;
   border-bottom: 1px solid #eaeaea;
 }
 
@@ -359,6 +388,35 @@ Custom general styles
   padding-right: 5px;
 }
 
+.small-card.group-card .more-info {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  border: 1px solid #eaeaea;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  padding-left: 3px;
+  padding-top: 1px;
+}
+
+.more-info-alert .summary-list {
+  text-align: left;
+}
+
+.more-info-alert .summary-list .element {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.more-info-alert .summary-list .description {
+  font-size: 12px;
+}
+
+.more-info-alert button {
+  margin-top: 10px;
+}
+
 .subjects-body h3,
 .courses-body h3,
 .groups-body h3 {
@@ -373,6 +431,19 @@ Custom general styles
   margin: 0 0 10px 0;
   font-weight: 400;
   text-transform: uppercase;
+}
+
+.icons-info {
+  padding-top: 10px;
+}
+
+.icons-info img {
+  width: 13px;
+  margin-top: -3px;
+}
+
+.bottom-buttons {
+  margin-bottom: 20px;
 }
 
 /*

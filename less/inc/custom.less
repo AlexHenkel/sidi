@@ -29,9 +29,9 @@ body #content {
 	.top-menu {
 		li {
 			.name {
-				color: #fff; 
-				font-size: 16px; 
-				height: auto; 
+				color: #fff;
+				font-size: 16px;
+				height: auto;
 				padding: 5px 8px;
 			}
 		}
@@ -52,7 +52,7 @@ body #content {
 #chat {
 	width: 150px;
 	p {
-		font-size: 16px; 
+		font-size: 16px;
 		text-align: center;
 		padding: 5px 8px;
 	}
@@ -122,7 +122,7 @@ Custom general styles
 		margin-bottom: 0;
 	}
 
-	.description {		
+	.description {
 		margin-bottom: 8px;
 	}
 }
@@ -132,8 +132,12 @@ Custom general styles
 }
 
 .block-header.custom {
+	padding-left: 0;
+	padding-right: 0;
 	h1 {
 		display: inline-block;
+		font-size: 28px;
+		font-weight: 400;
 	}
 }
 
@@ -141,6 +145,26 @@ Custom general styles
 	.block-header.custom {
 		margin-bottom: 17px;
 	}
+}
+
+// Header
+.header-inner {
+	.logo {
+		a {
+			margin-top: 9px;
+			img {
+				height: 31px;
+			}
+			span {
+				margin-left: 11px;
+			}
+		}
+	}
+}
+
+// Breadcrum
+.breadcrumb {
+	margin-bottom: 5px;
 }
 
 
@@ -154,6 +178,7 @@ Custom general styles
 	#info-col {
 		height: inherit;
 		overflow-y: auto;
+		overflow-x: visible;
 		.tab-content {
 			padding-top: 11px;
 		}
@@ -195,9 +220,12 @@ Custom general styles
 
 	thead {
 		th {
+			&:first-child {
+				background: #edecec;
+			}
 			text-align: center;
 			font-weight: 700 !important;
-			
+
 		}
 	}
 	tr {
@@ -211,7 +239,7 @@ Custom general styles
 			text-overflow: ellipsis;
 			text-align: center;
 			position: relative;
-			
+
 			&.hover-overlap:after {
 				content: "";
 				width: 100%;
@@ -252,62 +280,63 @@ Custom general styles
 	&.selected:after {
 		font: normal normal normal 14px/1 'Material Design Iconic Font';
 		content: "\f299";
-		font-size: 16px;
+		font-size: 20px;
 		color: @completed;
 		position: absolute;
-		top: 8px;
+		top: 2px;
 		right: 2px;
 	}
 	&.open:not(.overlap):after {
 		content: "";
 		background-image: url('../img/open.png');
 		position: absolute;
-		height: 10px;
-		width: 10px;
-		top: 9px;
+		height: 16px;
+		width: 16px;
+		top: 5px;
 		right: 4px;
-		background-size: 10px;
+		background-size: 14px;
 		background-repeat: no-repeat;
 	}
 	&.open.overlap:after {
 		content: "";
 		background-image: url('../img/open-overlap.png');
 		position: absolute;
-		height: 10px;
-		width: 10px;
-		top: 9px;
+		height: 16px;
+		width: 16px;
+		top: 5px;
 		right: 4px;
-		background-size: 10px;
+		background-size: 14px;
 		background-repeat: no-repeat;
 	}
 	&.closed:not(.overlap):after {
 		content: "";
 		background-image: url('../img/closed.png');
 		position: absolute;
-		height: 10px;
-		width: 10px;
-		top: 9px;
+		height: 16px;
+		width: 16px;
+		top: 5px;
 		right: 4px;
-		background-size: 10px;
+		background-size: 14px;
 		background-repeat: no-repeat;
 	}
 	&.closed.overlap:after {
 		content: "";
 		background-image: url('../img/closed-overlap.png');
 		position: absolute;
-		height: 10px;
-		width: 10px;
-		top: 9px;
+		height: 16px;
+		width: 16px;
+		top: 5px;
 		right: 4px;
-		background-size: 10px;
+		background-size: 14px;
 		background-repeat: no-repeat;
 	}
 	.subject-title {
-		font-size: 12px;
-		font-weight: 700;
+		font-size: 13px;
+		font-weight: 400;
 		white-space: normal;
 		padding-bottom: 3px;
-		padding-right: 9px;
+		padding-right: 18px;
+		line-height: 1.2;
 		border-bottom: 1px solid #eaeaea;
 	}
 	.material-list {
@@ -329,6 +358,35 @@ Custom general styles
 			padding-right: 5px;
 		}
 	}
+	&.group-card {
+		.more-info {
+			position: absolute;
+		    bottom: 3px;
+		    right: 3px;
+		    border: 1px solid #eaeaea;
+		    border-radius: 50%;
+		    height: 20px;
+		    width: 20px;
+		    padding-left: 3px;
+		    padding-top: 1px;
+		}
+	}
+}
+
+.more-info-alert {
+	.summary-list {
+		text-align: left;
+		.element {
+			font-size: 14px;
+			font-weight: 700;
+		}
+		.description {
+			font-size: 12px;
+		}
+	}
+	button {
+		margin-top: 10px;
+	}
 }
 
 .subjects-body,
@@ -345,4 +403,18 @@ Custom general styles
 	    font-weight: 400;
 	    text-transform: uppercase;
 	}
+}
+
+// Icons info
+.icons-info {
+	padding-top: 10px;
+	img {
+		width: 13px;
+		margin-top: -3px;
+	}
+}
+
+// Bottom buttons
+.bottom-buttons {
+	margin-bottom: 20px;
 }

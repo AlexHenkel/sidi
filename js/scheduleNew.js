@@ -805,6 +805,26 @@ function resizeScheduleSelectionCols() {
 	$("#cardScheduleSelection").height(iHeight);
 }
 
+/*
+
+Add new subject to the User array and add selected class to card
+
+*/
+
+function addSubjectToCurrentArray(eSubject) {
+	$(".subject-card").each(function() {
+    	// Add selected class to the card at home
+    	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
+    		$(this).addClass('selected');
+    		return false;
+    	}
+    });
+
+	arrSubjects.push(eSubject); // Add the group to the current user array
+	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
+	printSummary(); // Print the new summary
+}
+
 // Define here variables, for next functions to not crash
 var arrGlobalSubjects = []; // Array for all the subjects registered
 var arrSubjects = []; // Array of subjects of the current user
@@ -897,10 +917,8 @@ $(document).ready(function() {
 					});
 				});
             }
-            console.log(eSubject.name);
 
 		    $(".more-info").click(function(event) {
-		    	console.log(1);
 				event.stopPropagation();
 				var $summaryList = $summaryListOriginal.clone(true);
 
@@ -937,21 +955,11 @@ $(document).ready(function() {
 		    		removeSelected(eSubject); // Remove another group of the same course or subject if needed
 		    	}
 
-	            $(".subject-card").each(function() {
-	            	// Add selected class to the card at home
-	            	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
-	            		$(this).addClass('selected');
-	            		return false;
-	            	}
-	            });
+	            addSubjectToCurrentArray(eSubject);
 
-	            if ($(this).hasClass('current-subject')) {
+		    	if ($(this).hasClass('current-subject')) {
 	            	$(this).removeClass('current-subject');
 	            }
-
-		    	arrSubjects.push(eSubject); // Add the group to the current user array
-		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
-		    	printSummary(); // Print the new summary
             }
             else if($(this).hasClass("selected")) {
             	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
@@ -1041,17 +1049,7 @@ $(document).ready(function() {
 	            closeOnConfirm: true 
 	        }, function(){   
 	            removeSelected(ePastSubject);
-	            $(".subject-card").each(function() {
-	            	// Add selected class to the card at home
-	            	if ($(this).find('.subject-title').text() === eNewSubject.name || $(this).find('.subject-title').text() === eNewSubject.parentCourse) {
-	            		$(this).addClass('selected');
-	            		return false;
-	            	}
-	            });
-
-		    	arrSubjects.push(eNewSubject); // Add the group to the current user array
-		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
-		    	printSummary(); // Print the new summary
+	            addSubjectToCurrentArray(eNewSubject);
 
 		    	$("#groupsTab").removeClass('active');
         		$("#subjectsTab").addClass('active');

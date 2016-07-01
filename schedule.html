@@ -5,17 +5,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Sistema de Inscipciones</title>
-
+        
         <!-- Vendor CSS -->
-        <link href="vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
-        <link href="vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
-        <link href="vendors/bower_components/sweetalert/dist/sweetalert-override.min.css" rel="stylesheet">
-        <link href="vendors/bower_components/material-design-iconic-font/css/material-design-iconic-font.min.css" rel="stylesheet">
-        <link href="vendors/socicon/socicon.min.css" rel="stylesheet">
-
+        <link rel="stylesheet" type="text/css" href="vendors/bower_components/sweetalert/dist/sweetalert-override.min.css">
         <!-- CSS -->
-        <link href="css/app.min.1.css" rel="stylesheet">
-        <link href="css/app.min.2.css" rel="stylesheet">
+        <link href="css/app.min.css" rel="stylesheet">
+        
 
     </head>
     <body class="p-b-0">
@@ -24,58 +19,103 @@
                 <li class="logo">
                     <a href="index.html">
                         <img src="img/logotec.png" alt="">
+                        <span>
+                            <strong>| &nbsp;&nbsp;Sistema de Inscripciones</strong>
+                        </span>
                     </a>
                 </li>
 
-                <li class="pull-right">
-                <ul class="top-menu">
-                    <li class="dropdown hidden-xs">
-                        <a data-toggle="dropdown" href="" class="name">ALEJANDRO HENKEL <i class="md-expand-more"></i></a>
-                        <ul class="dropdown-menu dm-icon pull-right">
-                            <li>
-                                <a href=""><i class="md md-contacts"></i> Tutorial</a>
-                            </li>
-                            <li>
-                                <a href=""><i class="md md-live-help"></i> Contacto</a>
-                            </li>
-                            <li>
-                                <a href=""><i class="md md-settings-power"></i> Salir</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
-                        <a class="tm-chat" href=""></a>
-                    </li>
+                <li class="pull-right yes-xs">
+                    <ul class="top-menu">
+                        <li class="dropdown hidden-xs">
+                            <a data-toggle="dropdown" href="" class="name">AYUDA <i class="md-expand-more"></i></a>
+                            <ul class="dropdown-menu dm-icon pull-right">
+                                <li>
+                                    <a href=""><i class="md md-live-help"></i> Tutorial</a>
+                                </li>
+                                <li>
+                                    <a href=""><i class="md md-email"></i> Contacto</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="hidden-xs"  id="chat-trigger" data-trigger="#chat">
+                            <a href="" class="name">ALEJANDRO HENKEL <i class="md-expand-more"></i></a>
+                            <!-- <ul class="dropdown-menu dm-icon pull-right">
+
+                                <li>
+                                    <a href=""><i class="md md-settings-power"></i> Salir</a>
+                                </li>
+                            </ul> -->
+                        </li>
+                        <li class="visible-xs-block" id="chat-trigger" data-trigger="#chat">
+                            <a class="tm-chat" href=""></a>
+                        </li>
                     </ul>
                 </li>
             </ul>
         </header>
+        <ol class="breadcrumb">
+            <li><a href="index.html">Inicio</a></li>
+            <li class="active">Horario</li>
+        </ol>
 
         <section id="main">
             <aside id="chat">
-                <p>ALEJANDRO HENKEL</p>
-                <hr>
-                <ul>
-                    <li>
-                        <a href=""><i class="md md-contacts"></i> Tutorial</a>
-                    </li>
-                    <li>
-                        <a href=""><i class="md md-live-help"></i> Contacto</a>
-                    </li>
-                    <li>
-                        <a href=""><i class="md md-settings-power"></i> Salir</a>
-                    </li>
-                </ul>
+                <div class="listview">
+                    <h2>Mi Información</h2>
+                    <hr>
+                    <ul class="material-list">
+                        <li>
+                            <p class="element">Alejandro Henkel</p>
+                            <p class="description">Nombre</p>
+                        </li>
+                        <li>
+                            <p class="element">A01270874</p>
+                            <p class="description">Matrícula</p>
+                        </li>
+                        <li>
+                            <p class="element">Profesional</p>
+                            <p class="description">Nivel</p>
+                        </li>
+                        <li>
+                            <p class="element">IIS 07</p>
+                            <p class="description">Carrera</p>
+                        </li>
+                        <li>
+                            <p class="element">Agosto-Diciembre 2016</p>
+                            <p class="description">Semestre</p>
+                        </li>
+                        <li>
+                            <p class="element">CPXX</p>
+                            <p class="description">Concentración</p>
+                        </li>
+                        <li>
+                            <p class="element">CMXX</p>
+                            <p class="description">Modalidad</p>
+                        </li>
+                        <li>
+                            <p class="element">Monterrey</p>
+                            <p class="description">Campus</p>
+                        </li>
+                    </ul>
+                    <hr>
+                    <a href=""><i class="md md-settings-power"></i> Salir</a>
+                </div>
             </aside>
             <section id="content">
                 <div class="container">
                     <div class="block-header custom"> <!-- Main title -->
                         <h1>
-                            Realiza tu Horario
+                            <i class="md md-event"></i> Realiza tu Horario
                         </h1>
                         <div class="pull-right">
-                            <button class="btn btn-success waves-effect m-t-20" id="save-warning">Guardar</button>
-                            <button class="btn btn-danger waves-effect m-t-20" id="exit-warning">Salir</a>
+                            <button class="btn btn-default btn-icon-text waves-effect m-t-20 exit-warning">
+                                <i class="md md-arrow-back"></i> Regresar a Inicio
+                            </button>&nbsp;
+                            <button class="btn btn-primary btn-icon-text waves-effect m-t-20 save-warning">
+                                <i class="md md-save"></i> Guardar Horario
+                            </button>
                         </div>
                     </div>
 
@@ -114,7 +154,7 @@
                                                                             <ul class="material-list">
                                                                                 <li>
                                                                                     <p class="element priority"></p>
-                                                                                    <p class="description">Pri</p>
+                                                                                    <p class="description">Prioridad</p>
                                                                                 </li>
                                                                             </ul>
                                                                         </div>
@@ -130,7 +170,7 @@
                                                                             <ul class="material-list">
                                                                                 <li>
                                                                                     <p class="element units"></p>
-                                                                                    <p class="description">Uni</p>
+                                                                                    <p class="description">Unidad</p>
                                                                                 </li>
                                                                             </ul>
                                                                         </div>
@@ -149,7 +189,7 @@
                                                         </div>
                                                         <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
                                                             <div class="panel-body sports-body">
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -163,7 +203,7 @@
                                                         </div>
                                                         <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
                                                             <div class="panel-body cultural-body">
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -177,37 +217,34 @@
                                                         </div>
                                                         <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour">
                                                             <div class="panel-body student-body">
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div role="tabpanel" class="tab-pane courses-body" id="coursesTab">
-                                                <a role="tab" data-toggle="tab" class="btn btn-default waves-effect small-card course-card">
-                                                    <div class="subject-title"></div>
-                                                    <div class="row">
-                                                        <div class="col-xs-6">
-                                                            <ul class="material-list">
-                                                                <li>
-                                                                    <p class="element code"></p>
-                                                                    <p class="description">Clave</p>
-                                                                </li>
-                                                            </ul>
+                                                <h3></h3>
+                                                <h4 class="nav-title">Cursos</h4>
+                                                <!-- Panel Template -->
+                                                <div class="panel-group" role="tablist" aria-multiselectable="true">
+                                                    <div class="panel panel-collapse accordion-item">
+                                                        <div class="panel-heading" role="tab" id="courseHeading">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" href="#course" aria-expanded="true" aria-controls="course">
+                                                                </a>
+                                                            </h4>
                                                         </div>
-                                                        <div class="col-xs-6">
-                                                            <ul class="material-list">
-                                                                <li>
-                                                                    <p class="element units"></p>
-                                                                    <p class="description">Unidades</p>
-                                                                </li>
-                                                            </ul>
+                                                        <div id="course" class="collapse" role="tabpanel" aria-labelledby="courseHeading">
+                                                            <div class="panel-body course-body">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </a>
+                                                </div> <!-- End Panel Template -->
+                                                <a href='#subjectsTab' aria-controls='subjectsTab' class='btn btn-info btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Materias</a>
                                             </div>
                                             <div role="tabpanel" class="tab-pane groups-body" id="groupsTab">
-                                                <a role="tab" data-toggle="tab" class="btn btn-default waves-effect small-card group-card">
+                                                <a role="tab" data-toggle="tab" class="btn btn-default waves-effect small-card group-card" style="overflow: visible">
                                                     <div class="subject-title"></div>
                                                     <div class="row">
                                                         <div class="col-xs-2">
@@ -235,8 +272,8 @@
                                                             </ul>
                                                         </div>
                                                     </div>
+                                                    <i class="md md-more-horiz more-info"></i>
                                                 </a>
-                                                <!-- <a href="#subjectsTab" aria-controls="subjectsTab" role="tab" data-toggle="tab">Materias</a> -->
                                             </div>
                                         </div>
                                     </div>
@@ -250,17 +287,21 @@
 
                                         <div class="tab-content">
                                             <div role="tabpanel" class="tab-pane active" id="schedule">
+                                                <p class="schedule-info-bar">
+                                                    Unidades Inscritas: <span id="registeredUnits">0</span> &nbsp; Unidades Límite: <span id="limitUnits">48</span>
+                                                    <span class="pull-right">Tiempo Restante: <span id="timer" class="c-green"></span></span>
+                                                </p>
                                                 <div class="table-responsive">
                                                     <table class="table table-striped schedule-big" id="scheduleAtSelection">
                                                         <thead>
-                                                            <tr>    
-                                                                <th class="bgm-lightblue">Hora</th>
-                                                                <th class="bgm-lightblue c-white">Lunes</th>
-                                                                <th class="bgm-lightblue c-white">Martes</th>
-                                                                <th class="bgm-lightblue c-white">Miércoles</th>
-                                                                <th class="bgm-lightblue c-white">Jueves</th>
-                                                                <th class="bgm-lightblue c-white">Viernes</th>
-                                                                <th class="bgm-lightblue c-white">Sábado</th>
+                                                            <tr>
+                                                                <th class="bgm-lightblue" style="background-color:#edecec !important;">Hora</th>
+                                                                <th class="bgm-bluegray c-white">Lunes</th>
+                                                                <th class="bgm-bluegray c-white">Martes</th>
+                                                                <th class="bgm-bluegray c-white">Miércoles</th>
+                                                                <th class="bgm-bluegray c-white">Jueves</th>
+                                                                <th class="bgm-bluegray c-white">Viernes</th>
+                                                                <th class="bgm-bluegray c-white">Sábado</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -276,7 +317,7 @@
                                                                 <h2></h2>
                                                             </div>
                                                             <div class="card-body card-padding">
-                                                                <ul class="material-list">
+                                                                <ul class="material-list summary-list">
                                                                     <li>
                                                                         <p class="element teachers"></p>
                                                                         <p class="description">Profesor</p>
@@ -297,6 +338,10 @@
                                                                         <p class="element options"></p>
                                                                         <p class="description">Atributos</p>
                                                                     </li>
+                                                                    <li>
+                                                                        <p class="element parent-course"></p>
+                                                                        <p class="description">Acredita</p>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -309,6 +354,26 @@
                             </div>
                         </div>
                     </div> <!-- Ends Schedule -->
+                    <div class="pull-left yes-xs icons-info"> <!-- Icon info -->
+                        <img src="img/open.png">
+                        Abierta&nbsp; | &nbsp;
+                        <img src="img/closed.png">
+                        Cerrada&nbsp; | &nbsp;
+                        <img src="img/open-overlap.png">
+                        Abierta y empalmada&nbsp; | &nbsp;
+                        <img src="img/closed-overlap.png">
+                        Cerrada y empalmada
+                    </div> <!-- End Icon info -->
+                    <div class="bottom-buttons pull-right"> <!-- Buttons -->
+                        <button class="btn btn-default btn-icon-text waves-effect m-t-20 exit-warning">
+                            <i class="md md-arrow-back"></i>
+                            Regresar a Inicio
+                        </button>&nbsp;
+                        <button class="btn btn-primary btn-icon-text waves-effect m-t-20 save-warning">
+                            <i class="md md-save"></i>
+                            Guardar Horario
+                        </button>
+                    </div>
                 </div>
             </section>
         </section>
@@ -360,15 +425,6 @@
         <script src="vendors/bower_components/jquery/dist/jquery.min.js"></script>
         <script src="vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-        <script src="vendors/bower_components/flot/jquery.flot.js"></script>
-        <script src="vendors/bower_components/flot/jquery.flot.resize.js"></script>
-        <script src="vendors/bower_components/flot.curvedlines/curvedLines.js"></script>
-        <script src="vendors/sparklines/jquery.sparkline.min.js"></script>
-        <script src="vendors/bower_components/jquery.easy-pie-chart/dist/jquery.easypiechart.min.js"></script>
-
-        <script src="vendors/bower_components/moment/min/moment.min.js"></script>
-        <script src="vendors/bower_components/fullcalendar/dist/fullcalendar.min.js "></script>
-        <script src="vendors/bower_components/simpleWeather/jquery.simpleWeather.min.js"></script>
         <script src="vendors/bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
         <script src="vendors/bower_components/Waves/dist/waves.min.js"></script>
         <script src="vendors/bootstrap-growl/bootstrap-growl.min.js"></script>
@@ -379,15 +435,11 @@
             <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
         <![endif]-->
 
-        <script src="js/flot-charts/curved-line-chart.js"></script>
-        <script src="js/flot-charts/line-chart.js"></script>
-        <script src="js/charts.js"></script>
-
         <script src="js/functions.js"></script>
-        <script src="js/demo.js"></script>
-        <script src="js/schedule.js"></script>
+        <script src="js/schedule.js"></script> <!-- Main script of the sysyem -->
 
         <script>
+        // Creates dummy subjects
         arrGlobalSubjects.push(new Subject(1, "Matemáticas Computacionales", "TC1005.1", ["wednesday"], 1100, 3, ["Ramón Brena", "Javier Coronado"], "A3", "301", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 401, "academic", [], false, "", 8, 30, 20),
             new Subject(2, "Algebra Lineal", "TC1005.16", ["monday", "thursday"], 800, 6, ["Jorge Hernández"], "A4", "104", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 401, "academic", [], false, "", 8, 30, 20),
             new Subject(3, "Sistemas Operativos", "TC1005.1", ["monday", "thursday"], 1500, 3, ["José Murillo"], "A3", "303", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 501, "academic", [], false, "", 8, 30, 20),
@@ -400,18 +452,18 @@
             new Subject(9, "Algebra Lineal", "TC1005.2", ["monday", "thursday"], 1000, 3, ["Raúl Salinas"], "A4", "104", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 401, "academic", [], false, "", 8, 30, 20),
             new Subject(10, "Sistemas Operativos", "TC1005.2", ["tuesday", "friday"], 1330, 3, ["Ricardo Martínez"], "A3", "303", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 501, "academic", [], false, "", 8, 30, 20),
             new Subject(11, "Análisis y modelación de sistemas de software", "TC1005.2", ["tuesday", "friday"], 1030, 3, ["Iliana Rámirez "], "A3", "230", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 501, "academic", [], false, "", 8, 30, 20),
-            new Subject(12, "Medios, Cultura y Sociedad", "TC1005.2", ["monday", "thursday"], 1330, 3, ["Javier Rosales"], "CI", "507", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
+            new Subject(12, "Medios, Cultura y Sociedad", "TC1005.2", ["monday", "thursday"], 1330, 3, ["Javier Rosales"], "CI", "507", [], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
             new Subject(13, "Ciudadanía y Democracia", "TC1005.2", ["wednesday"], 1200, 6, ["Luis Humberto Salas"], "CI", "507", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
             new Subject(14, "Expresión verbal en el Ámbito profesional", "TC1005.2", ["monday", "thursday"], 1330, 3, ["Delia Hinojosa"], "A3", "112", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 301, "academic", [], false, "", 8, 30, 20));
 
         arrGlobalSubjects.push(new Subject(15, "Matemáticas Computacionales", "TC1005.3", ["monday", "thursday"], 1000, 3, ["Alejandra Ramirez", "Javier Coronado"], "A3", "301", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 401, "academic", [], false, "", 8, 30, 20),
-            new Subject(16, "Algebra Lineal", "TC1005.3", ["wednesday"], 1030, 3, ["Eduardo Uresti"], "A4", "104", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 401, "academic", [], false, "", 8, 30, 20),
-            new Subject(17, "Sistemas Operativos", "TC1005.3", ["monday", "thursday"], 1630, 3, ["Juan Carlos Lavariega"], "A3", "303", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 501, "academic", [], false, "", 8, 30, 20),
+            new Subject(16, "Algebra Lineal", "TC1005.3", ["wednesday"], 1030, 3, ["Eduardo Uresti"], "A4", "104", [], "10 de agosto de 2015 a 25 de noviembre de 2015", 401, "academic", [], false, "", 8, 30, 20),
+            new Subject(17, "Sistemas Operativos", "TC1005.3", ["monday", "thursday"], 1630, 3, ["Juan Carlos Lavariega"], "A3", "303", [], "10 de agosto de 2015 a 25 de noviembre de 2015", 501, "academic", [], false, "", 8, 30, 20),
             new Subject(18, "Análisis y modelación de sistemas de software", "TC1005.3", ["tuesday", "friday"], 1200, 3, ["Laura Tellez"], "A3", "230", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 501, "academic", [], false, "", 8, 30, 20),
-            new Subject(19, "Medios, Cultura y Sociedad", "TC1005.3", ["tuesday", "friday"], 730, 3, ["Cristina Herrera"], "CI", "507", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
-            new Subject(20, "Ciudadanía y Democracia", "TC1005.3", ["tuesday", "friday"], 1230, 3, ["Federico Gutierrez"], "CI", "507", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
+            new Subject(19, "Medios, Cultura y Sociedad", "TC1005.3", ["tuesday", "friday"], 730, 3, ["Cristina Herrera"], "CI", "507", [], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
+            new Subject(20, "Ciudadanía y Democracia", "TC1005.3", ["tuesday", "friday"], 1230, 3, ["Federico Gutierrez"], "CI", "507", [], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 20),
             new Subject(21, "Expresión verbal en el Ámbito profesional", "TC1005.3", ["monday", "thursday"], 1330, 3, ["Roger Garza"], "A3", "112", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 301, "academic", [], false, "", 8, 30, 30),
-            new Subject(21, "Ética Aplicada", "TC1005.3", ["tuesday", "friday"], 1200, 3, ["Juan Carlos Montero"], "A3", "112", ["Curso Honors"], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 15));
+            new Subject(22, "Ética Aplicada", "TC1005.3", ["tuesday", "friday"], 1200, 3, ["Juan Carlos Montero"], "A3", "112", [], "10 de agosto de 2015 a 25 de noviembre de 2015", 0, "academic", [], true, "", 8, 30, 15));
 
         arrGlobalSubjects.push(new Subject(22, "Ciudadanía", "TC1005", [], 0, 0, [], "", "", [], "", 401, "academic", ["Ciudadanía y Democracia", "Ética Aplicada"], false, "", 8, 0, 0),
             new Subject(23, "Humanidades y Bellas Artes", "HU1005", [], 0, 0, [], "", "", [], "", 501, "academic", ["Medios, Cultura y Sociedad"], false, "", 8, 0, 0));
@@ -419,10 +471,10 @@
             $scheduleAtSelectionCurrent = printScheduleAtSelection();
             printSummary();
             printSubjectCards();
+            // 60 seconds times # of minutes to get duration
+            var iDuration = 60 * 30;
+            timer(iDuration, $("#timer"));
         });
-
         </script>
-
-
     </body>
   </html>

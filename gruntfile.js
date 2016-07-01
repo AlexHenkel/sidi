@@ -4,16 +4,16 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         less: {
-            development: {
-                options: {
-                    paths: ["css"]
-                },
-                files: {
-                    "css/app.css": "less/app.less",
-                },
-                cleancss: true
-            },
-            /*production: {
+            // development: {
+            //     options: {
+            //         paths: ["css"]
+            //     },
+            //     files: {
+            //         "css/app.css": "less/app.less",
+            //     },
+            //     cleancss: true
+            // },
+            production: {
                 options: {
                     paths: ["css"],
                     cleancss: true,
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                 files: {
                     "css/app.min.css": "less/app.less",
                 }
-            },*/
+            },
         },
         csssplit: {
             your_target: {

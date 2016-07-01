@@ -254,7 +254,65 @@ function printScheduleAtSelection() {
 
 	$("#schedule-col .table-responsive").append($schedule);
 	resizeScheduleSelectionCols();
+	updateUnits();
 	return $schedule;
+}
+
+/*
+
+GETS SUMMARY LIST
+
+ */
+
+function getSummaryList($summaryList, eSubject) {
+	// Adds each teacher of the subject
+	$.each(eSubject.teachers, function(iTeacher, eTeacher) {
+		$summaryList.find(".teachers").append(eTeacher);
+		// If it's not the last teacher, append a break
+		if(iTeacher !== (eSubject.teachers.length - 1)) {
+			$summaryList.find(".teachers").append("<br>");
+		}
+	});
+
+	$summaryList.find(".date").append(eSubject.courseDate);
+
+	// Adds each day the subject is given
+	$.each(eSubject.days, function(iDay, eDay) {
+		$summaryList.find(".class-schedule").append(Days[eDay]);
+		// If it's not the last day, append a comma
+		if(iDay !== (eSubject.days.length - 1)) {
+			$summaryList.find(".class-schedule").append(", ");
+		}
+	});
+
+	// Adds start and end hour
+	$summaryList.find(".class-schedule").append(" " + eSubject.getStartHour() + " - " + eSubject.getEndHour());
+
+	// Adds building and classroom
+	$summaryList.find(".building-classroom").append(eSubject.building + " " + eSubject.classroom);
+
+	// Verify if the class has options
+	if (eSubject.options.length) {
+		// Add extra attributes of class
+		$.each(eSubject.options, function(iOption, eOption) {
+			$summaryList.find(".options").append(eOption);
+			// If it's not the last option, append a break
+			if(iOption !== (eSubject.options.length - 1)) {
+				$summaryList.find(".options").append("<br>");
+			}
+		});
+	}
+	else {
+		$summaryList.find(".options").parent().remove();
+	}
+
+	// Verify if the class has parent course
+	if (eSubject.hasParentCourse) {
+		$summaryList.find(".parent-course").append(eSubject.parentCourse);
+	}
+	else {
+		$summaryList.find(".parent-course").parent().remove();
+	}
 }
 
 
@@ -274,45 +332,7 @@ function printSummary() {
 		$summaryCard.find(".card-header").addClass(eSubject.color);
 		$summaryCard.find(".card-header h2").append(eSubject.code + " " + eSubject.name);
 		
-		// Adds each teacher of the subject
-		$.each(eSubject.teachers, function(iTeacher, eTeacher) {
-			$summaryCard.find(".teachers").append(eTeacher);
-			// If it's not the last teacher, append a break
-			if(iTeacher !== (eSubject.teachers.length - 1)) {
-				$summaryCard.find(".teachers").append("<br>");
-			}
-		});
-
-		$summaryCard.find(".date").append(eSubject.courseDate);
-
-		// Adds each day the subject is given
-		$.each(eSubject.days, function(iDay, eDay) {
-			$summaryCard.find(".class-schedule").append(Days[eDay]);
-			// If it's not the last day, append a comma
-			if(iDay !== (eSubject.days.length - 1)) {
-				$summaryCard.find(".class-schedule").append(", ");
-			}
-		});
-
-		// Adds start and end hour
-		$summaryCard.find(".class-schedule").append(" " + eSubject.getStartHour() + " - " + eSubject.getEndHour());
-
-		// Adds building and classroom
-		$summaryCard.find(".building-classroom").append(eSubject.building + " " + eSubject.classroom);
-
-		// Add extra attributes of class
-		$.each(eSubject.options, function(iOption, eOption) {
-			$summaryCard.find(".options").append(eOption);
-			// If it's not the last option, append a break
-			if(iOption !== (eSubject.options.length - 1)) {
-				$summaryCard.find(".options").append("<br>");
-			}
-		});
-
-		// Shows the parent course if it has one
-		if(eSubject.hasParentCourse) {
-			$summaryCard.find(".material-list").append("<li><p class='element parent-course'>" + eSubject.parentCourse + "</p><p class='description'>Acredita</p></li>");
-		}
+		getSummaryList($summaryCard.find(".summary-list"), eSubject);
 
 		// Apends the card to the html
 		$(".summary").append($summaryCard);
@@ -522,6 +542,11 @@ function getGroupCard(eSubject) {
 		else if (eSubject.isFull()) {
 			$groupCard.addClass('closed');
 		}
+		// Verify if the current subject is open but has special attributes
+		else if (eSubject.options.length) {
+			$groupCard.addClass('open');
+			$groupCard.addClass('special-attributes');
+		}
 		// Verify if the current subject is open and don't overlaps
 		else {
 			$groupCard.addClass('open');
@@ -543,6 +568,11 @@ function getGroupCard(eSubject) {
 	// Verify if the current subject is closed
 	else if (eSubject.isFull()) {
 		$groupCard.addClass('closed');
+	}
+	// Verify if the current subject is open but has special attributes
+	else if (eSubject.options.length) {
+		$groupCard.addClass('open');
+		$groupCard.addClass('special-attributes');
 	}
 	// Verify if the current subject is open and don't overlaps
 	else {
@@ -708,35 +738,38 @@ CLICK EVENT FOR SUBJECTS WITH CHILD COURSES
 */
 
 function printCourseCards(sSubject) {
-	$(".courses-body").empty(); // Clear the body of past prints
-	$(".courses-body").append("<h3>" + sSubject + "</h3>"); // Display the name of the subject as a title
-	$(".courses-body").append("<h4 class='nav-title'>Cursos</h4>"); // Display the name of the current tab
+	$(".courses-body .panel-group").empty(); // Clear the body of past prints
+	$(".courses-body h3").text(sSubject); // Display the name of the subject as a title
 
-	// Find the subject, this should return an array of 1 element, beacuse the subject must be only one time. The get it's children courses
+	// Find the subject, this should return an array of 1 element, beacuse the subject must be only one time. Then get it's children courses
 	var arrChildrenCourses = $.grep(arrGlobalSubjects, function(eSubject){
 		return eSubject.name === sSubject;
 	})[0].childrenCourses;
+
+	var iCountSubjects = 0; // Counter to set unique id's of the accordions
 
 	$.each(arrChildrenCourses, function(index, eCourseName) { // For each children course
 		var arrChildCourse = $.grep(arrGlobalSubjects, function(eSubject) { // Find all the groups 
 			return eSubject.name === eCourseName;
 		});
 
+		var $courseAccordion = $courseAccordionOriginal.clone(true); // Get a copy of the accordion item
+
+		// Add properties for the accordion to work well
+		$courseAccordion.find('.panel-heading').attr("id", "courseHeading" + iCountSubjects);
+		$courseAccordion.find('a').attr("href", "#course" + iCountSubjects);
+		$courseAccordion.find('a').attr("aria-controls", "course" + iCountSubjects);
+		$courseAccordion.find('a').append(eCourseName); // Add course name to the title
+		$courseAccordion.find('.collapse').attr("id", "course" + iCountSubjects);
+		$courseAccordion.find('.collapse').attr("aria-labelledby", "courseHeading" + iCountSubjects);
+
 		$.each(arrChildCourse, function(iCourse, eCourse) { // Set each children course it's parent course
 			eCourse.parentCourse = sSubject;
+			$courseAccordion.find(".panel-body").append(getGroupCard(eCourse));
 		});
-
-		var $subjectCard = getSubjectCard(arrChildCourse[0], $courseCardOriginal, arrChildCourse.length); // Get the DOM object of the card
-		$subjectCard.addClass('from-courses');
-
-		if (courseIsSelected(eCourseName)) {
-			$subjectCard.addClass('selected');
-		}
-
-		$(".courses-body").append($subjectCard); // Print it
+		$(".courses-body .panel-group").append($courseAccordion); // Print it
+		iCountSubjects++;
 	});
-
-	$(".courses-body").append("<a href='#subjectsTab' aria-controls='subjectsTab' class='btn btn-info btn-block waves-effect back-btn' role='tab' data-toggle='tab'>Regresar a Materias</button>");
 }
 
 /*
@@ -778,6 +811,144 @@ function resizeScheduleSelectionCols() {
 	$("#cardScheduleSelection").height(iHeight);
 }
 
+/*
+
+Add new subject to the User array and add selected class to card
+
+*/
+
+function addSubjectToCurrentArray(eSubject) {
+	$(".subject-card").each(function() {
+    	// Add selected class to the card at home
+    	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
+    		$(this).addClass('selected');
+    		return false;
+    	}
+    });
+
+	arrSubjects.push(eSubject); // Add the group to the current user array
+	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
+	printSummary(); // Print the new summary
+}
+
+/*
+
+Update units signs
+
+*/
+
+function updateUnits(){
+	var iSum = 0;
+	$.each(arrSubjects, function(iSubject, eSubject) {
+		iSum += eSubject.units;
+	})
+	$("#registeredUnits").html(iSum);
+}
+
+/*
+
+Verify if there's still space to sign in the unit groups
+
+*/
+
+function verifyUnits(iUnits) {
+	var iCurrentSum = 0;
+	var iLimitUnits = parseInt($("#limitUnits").text());
+
+	$.each(arrSubjects, function(iSubject, eSubject) {
+		iCurrentSum += eSubject.units;
+	})
+	return iCurrentSum + iUnits <= iLimitUnits;
+}
+
+/*
+
+Timer
+
+*/
+
+function timer(iDuration, $timer) {
+    var iTimer = iDuration, iMinutes, iSeconds;
+
+    setInterval(function () {
+        iMinutes = parseInt(iTimer / 60, 10)
+        iSeconds = parseInt(iTimer % 60, 10);
+
+        iMinutes = iMinutes < 10 ? "0" + iMinutes : iMinutes;
+        iSeconds = iSeconds < 10 ? "0" + iSeconds : iSeconds;
+
+        $timer.text(iMinutes + ":" + iSeconds);
+
+        if (--iTimer < 0) { // Notifies and redirects the user when time is over
+        	$timer.text("00:00");
+            swal({   
+	            title: "Upps! Se ha agotado tu tiempo",   
+	            text: "Tu sesión ha finalizado, por favor reintenta.",   
+	            type: "error",
+	            confirmButtonColor: '#2196f3'
+	        }, function(){   
+	        	location.assign("index.html");
+	        });
+        }
+        else if(iTimer === (iDuration / 2) - 1) { // Changes from green to yellow at 15 minutes
+        	$timer.removeClass('c-green');
+        	$timer.addClass('c-amber');
+        }
+        else if(iTimer === (iDuration / 6) - 1) {
+        	$timer.removeClass('c-amber');
+        	$timer.addClass('c-red');
+        	console.log(1);
+        	notify(undefined, undefined, undefined, "inverse", "animated bounceInUp", "animated bounceOutUp"); // Notifies the user that has 5 minutes left
+        }
+    }, 1000);
+}
+
+/*
+ * Notifications
+ */
+
+function notify(from, align, icon, type, animIn, animOut){
+    $.growl({
+        icon: icon,
+        title: ' ¡Apresurate! ',
+        message: 'Solo te quedan 5 minutos para finalizar tu horario',
+        url: ''
+    },{
+            element: 'body',
+            type: type,
+            allow_dismiss: true,
+            placement: {
+                    from: from,
+                    align: align
+            },
+            offset: {
+                x: 20,
+                y: 85
+            },
+            spacing: 10,
+            z_index: 1031,
+            delay: 2500,
+            timer: 2000,
+            url_target: '_blank',
+            mouse_over: false,
+            animate: {
+                    enter: animIn,
+                    exit: animOut
+            },
+            icon_type: 'class',
+            template: '<div data-growl="container" class="alert" role="alert">' +
+                            '<button type="button" class="close" data-growl="dismiss">' +
+                                '<span aria-hidden="true">&times;</span>' +
+                                '<span class="sr-only">Close</span>' +
+                            '</button>' +
+                            '<span data-growl="icon"></span>' +
+                            '<span data-growl="title"></span>' +
+                            '<span data-growl="message"></span>' +
+                            '<a href="#" data-growl="url"></a>' +
+                        '</div>'
+    });
+};
+
 // Define here variables, for next functions to not crash
 var arrGlobalSubjects = []; // Array for all the subjects registered
 var arrSubjects = []; // Array of subjects of the current user
@@ -789,12 +960,17 @@ var ePastSubject;
 
 var $summaryCardOriginal; // Summary card template
 var $subjectCardOriginal; // Subjects card template
+var $courseAccordionOriginal // Course accordion Template
 var $courseCardOriginal;  // Course card template
 var $groupCardOriginal; // Group card template
+var $summaryListOriginal; // Summary list template
 var $scheduleAtSelectionOriginal; // Gets the original DOM object of the schedule
 var $scheduleAtSelectionCurrent; // Gets the current DOM object of the schedule
 
 $(document).ready(function() {
+	// Gets the template of the summary list and deletes it
+	$summaryListOriginal = $(".summary-list").clone(true);
+
 	// Gets the template of the summary card and deletes it
 	$summaryCardOriginal = $(".summary-card").clone(true);
 	$(".summary-card").remove();
@@ -802,6 +978,10 @@ $(document).ready(function() {
 	// Gets the template of the subject card and deletes it
 	$subjectCardOriginal = $(".subject-card").clone(true);
 	$(".subject-card").remove();
+
+	// Gets the template of the course accordion and deletes it
+	$courseAccordionOriginal = $(".accordion-item").clone(true);
+	$(".accordion-item").remove();
 
 	// Gets the template of the course card and deletes it
 	$courseCardOriginal = $(".course-card").clone(true);
@@ -861,6 +1041,22 @@ $(document).ready(function() {
 					});
 				});
             }
+
+		    $(".more-info").click(function(event) {
+				event.stopPropagation();
+				var $summaryList = $summaryListOriginal.clone(true);
+
+				getSummaryList($summaryList, eSubject);
+
+		    	swal({
+		    		title: eSubject.name,   
+		    		text: $summaryList.wrap('<p/>').parent().html(),   
+		    		html: true,
+		    		confirmButtonColor: '#2196f3',
+		    		customClass: "more-info-alert",
+		    		allowOutsideClick: true
+		    	});
+		    });
 		},
 
 	    mouseleave: function () {
@@ -874,38 +1070,59 @@ $(document).ready(function() {
 	    },
 
         click: function (event) {
-            if ($(this).hasClass("open")) { // Verify if the group is opened and it doesn't overlaps
-            	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
-	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
-		    		return element.id == iValue;
-		    	})[0];
+        	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
+            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
+	    		return element.id == iValue;
+	    	})[0];
 
-		    	if (groupIsSelected(eSubject.id) || courseIsSelected(eSubject.name) || subjectIsSelected(eSubject.parentCourse)) {
-		    		removeSelected(eSubject); // Remove another group of the same course or subject if needed
+            if ($(this).hasClass("open") && !$(this).hasClass("special-attributes")) { // Verify if the group is opened
+		    	if (verifyUnits(eSubject.units)) {
+		    		if (groupIsSelected(eSubject.id) || courseIsSelected(eSubject.name) || subjectIsSelected(eSubject.parentCourse)) {
+			    		removeSelected(eSubject); // Remove another group of the same course or subject if needed
+			    	}
+
+		            addSubjectToCurrentArray(eSubject);
+
+			    	if ($(this).hasClass('current-subject')) {
+		            	$(this).removeClass('current-subject');
+		            }
 		    	}
+		    	else {
+		    		swal("Error", "Has rebasado tus unidades límites de inscripción. Revisa tus materias.", "error"); 
+		    	}
+            }
+            else if ($(this).hasClass("open") && $(this).hasClass("special-attributes")) { // Verify if the group is opened and has special attributes
+            	if (verifyUnits(eSubject.units)) {
+            		eNewSubject = eSubject; // Copy the current subject to a global variable
+	            	swal({   
+					    title: "¿Estás seguro que quieres inscibir esta materia?",   
+					    text: "La materia <b>" + eNewSubject.name + "</b> tiene los siguientes atributos: <b>" + eNewSubject.options.join(", ") + "</b>.",   
+					    type: "warning",
+					    html: true, 
+					    showCancelButton: true,   
+					    confirmButtonColor: "#25AF30",   
+					    confirmButtonText: "Si, inscibir",
+					    cancelButtonText: "Regresar",   
+					    closeOnConfirm: true 
+					}, function(){   
+					    if (groupIsSelected(eNewSubject.id) || courseIsSelected(eNewSubject.name) || subjectIsSelected(eNewSubject.parentCourse)) {
+							removeSelected(eNewSubject); // Remove another group of the same course or subject if needed
+						}
 
-	            $(".subject-card").each(function() {
-	            	// Add selected class to the card at home
-	            	if ($(this).find('.subject-title').text() === eSubject.name || $(this).find('.subject-title').text() === eSubject.parentCourse) {
-	            		$(this).addClass('selected');
-	            		return false;
-	            	}
-	            });
+					    addSubjectToCurrentArray(eNewSubject); // Adds the subject to the current array and add selected class to card
 
-	            if ($(this).hasClass('current-subject')) {
-	            	$(this).removeClass('current-subject');
-	            }
-
-		    	arrSubjects.push(eSubject); // Add the group to the current user array
-		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
-		    	printSummary(); // Print the new summary
+						if ($(".group-card[value='" + eNewSubject.id + "']").hasClass('current-subject')) {
+					    	$(".group-card[value='" + eNewSubject.id + "']").removeClass('current-subject');
+					    }
+					    $("#groupsTab").removeClass('active');
+	        			$("#subjectsTab").addClass('active');
+					});
+            	}
+            	else {
+            		swal("Error", "Has rebasado tus unidades límites de inscripción. Revisa tus materias.", "error"); 
+            	}
             }
             else if($(this).hasClass("selected")) {
-            	var iValue = parseInt($(this).attr("value")); // Gets the index of the subject in the global array
-	            var eSubject = $.grep(arrGlobalSubjects, function(element) { // Get the subject object
-		    		return element.id == iValue;
-		    	})[0];
-
 		    	removeSelected(eSubject); // Remove another group of the same course or subject if needed
             }
         }
@@ -943,6 +1160,22 @@ $(document).ready(function() {
 					}
 				});
 			});
+
+			$(".more-info").click(function(event) {
+				event.stopPropagation();
+				var $summaryList = $summaryListOriginal.clone(true);
+
+				getSummaryList($summaryList, eSubject);
+
+		    	swal({
+		    		title: eSubject.name,   
+		    		text: $summaryList.wrap('<p/>').parent().html(),   
+		    		html: true,
+		    		confirmButtonColor: '#2196f3',
+		    		customClass: "more-info-alert",
+		    		allowOutsideClick: true
+		    	});
+		    });
 		},
 
 	    mouseleave: function () {
@@ -962,32 +1195,41 @@ $(document).ready(function() {
 	    		return element.name === sPastSubject;
 	    	})[0];
 
-	    	swal({   
-	            title: "¿Estás seguro que quieres reemplazar esta materia?",   
-	            text: "Cambiarás del grupo " + ePastSubject.name + " con " + ePastSubject.teachers[0] + " , al grupo " + eNewSubject.name + " con " + eNewSubject.teachers[0] + ".",   
-	            type: "warning",   
-	            showCancelButton: true,   
-	            confirmButtonColor: "#25AF30",   
-	            confirmButtonText: "Si, reemplazar",
-	            cancelButtonText: "Regresar",   
-	            closeOnConfirm: true 
-	        }, function(){   
-	            removeSelected(ePastSubject);
-	            $(".subject-card").each(function() {
-	            	// Add selected class to the card at home
-	            	if ($(this).find('.subject-title').text() === eNewSubject.name || $(this).find('.subject-title').text() === eNewSubject.parentCourse) {
-	            		$(this).addClass('selected');
-	            		return false;
-	            	}
-	            });
+	    	if (verifyUnits(eNewSubject.units)) {
+	    		swal({   
+		            title: "¿Estás seguro que quieres reemplazar esta materia?",   
+		            text: "Cambiarás del grupo <b>" + ePastSubject.name + "</b> con <b>" + ePastSubject.teachers[0] + "</b> , al grupo <b>" + eNewSubject.name + "</b> con <b>" + eNewSubject.teachers[0] + "</b>.",   
+		            type: "warning",
+		            html: true,
+		            showCancelButton: true,   
+		            confirmButtonColor: "#25AF30",   
+		            confirmButtonText: "Si, reemplazar",
+		            cancelButtonText: "Regresar",   
+		            closeOnConfirm: false 
+		        }, function(){
+		        	console.log(1);
+		        	swal({   
+					    title: "¿Estás seguro que quieres inscibir esta materia?",   
+					    text: "La materia <b>" + eNewSubject.name + "</b> tiene los siguientes atributos: <b>" + eNewSubject.options.join(", ") + "</b>.",   
+					    type: "warning",
+					    html: true, 
+					    showCancelButton: true,   
+					    confirmButtonColor: "#25AF30",   
+					    confirmButtonText: "Si, inscibir",
+					    cancelButtonText: "Regresar",   
+					    closeOnConfirm: true 
+					}, function(){   
+					    removeSelected(ePastSubject);
+			            addSubjectToCurrentArray(eNewSubject);
 
-		    	arrSubjects.push(eNewSubject); // Add the group to the current user array
-		    	$scheduleAtSelectionCurrent = printScheduleAtSelection(); // Print the new schedule and store it
-		    	printSummary(); // Print the new summary
-
-		    	$("#groupsTab").removeClass('active');
-        		$("#subjectsTab").addClass('active');
-	        });
+				    	$("#groupsTab").removeClass('active');
+		        		$("#subjectsTab").addClass('active');
+					});  
+		        });
+	    	}
+	    	else {
+	    		swal("Error", "Has rebasado tus unidades límites de inscripción. Revisa tus materias.", "error"); 
+	    	}
         }
             
 	}, ".group-card.overlap");
@@ -995,7 +1237,7 @@ $(document).ready(function() {
 	/*
 		Function to show the alert of the exit
 	 */
-	$('#exit-warning').click(function(){
+	$('.exit-warning').click(function(){
         swal({   
             title: "¿Estás seguro que quieres salir?",   
             text: "No se guardarán los cambios",   
@@ -1012,7 +1254,7 @@ $(document).ready(function() {
     /*
 		Function to show the alert of the exit
 	 */
-	$('#save-warning').click(function(){
+	$('.save-warning').click(function(){
         swal({   
             title: "¿Estás seguro que quieres guardar los cambios?",   
             text: "Has inscrito 6 materias y 48 unidades",   

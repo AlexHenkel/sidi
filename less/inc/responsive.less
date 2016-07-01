@@ -1,0 +1,48 @@
+@media (min-width: @screen-sm-min) {
+	.header-title {
+		vertical-align: middle;
+		display: inline-block;
+		font-size: 28px;
+		margin-left: 5px;
+	}
+
+	.block-header.custom {
+		margin-bottom: 17px;
+	}
+}
+
+@media (min-width: 768px) {
+	.block-header.custom {
+	    margin-bottom: 4px !important;
+	}
+}
+
+@media (max-width: @screen-xs-max) {
+	.pull-right:not(.yes-xs),
+	.pull-left:not(.yes-xs) {
+		float: none !important;
+	}
+
+	.header-inner {
+		.logo {
+			a {
+				padding-left: 0;
+				img {
+					height: 25px;
+				}
+				span {
+					margin-left: 2px;
+					font-size: 12px;
+				}
+			}
+		}
+
+		.pull-right {
+			padding-top: 8px;
+		}
+	}
+
+	#cardScheduleSelection {
+		height: auto !important;
+	}
+}
